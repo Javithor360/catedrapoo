@@ -10,5 +10,8 @@ public class Main {
         JFrame frame = new Login("Login");
         frame.setVisible(true);
         frame.setLocationRelativeTo(null);
+
+        // PARA ACCEDER A LAS VISTAS DE JEFE DE DESARROLLO MIENTRAS SE CORRIGE EL LOGIN
+        // new JefeDesarrolloMain();
     }
 }

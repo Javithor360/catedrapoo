@@ -64,7 +64,7 @@ public class Login extends JFrame {
                 if (area == 1 && (jefeArea == 1 || resultSet.wasNull())) {
                     dispose();
                     JOptionPane.showMessageDialog(null, "Bienvenido Jefe de Area");
-                    new JefeDesarrolloMain("Área Desarrollo Jefe").setVisible(true);
+                    // new JefeDesarrolloMain("Área Desarrollo Jefe").setVisible(true);
                 } else if (area == 1 && (jefeArea == 0 || resultSet.wasNull())){
                     dispose();
                     JOptionPane.showMessageDialog(null, "Bienvenido al Area de Desarrollo");
