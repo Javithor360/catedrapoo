@@ -35,6 +35,8 @@
             <constraints border-constraint="North"/>
             <properties>
               <font name="Consolas" size="18" style="3"/>
+              <horizontalAlignment value="0"/>
+              <horizontalTextPosition value="0"/>
               <text value="Supervisión del equipo de programadores"/>
             </properties>
           </component>
