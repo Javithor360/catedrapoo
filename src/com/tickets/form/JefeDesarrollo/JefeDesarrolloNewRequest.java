@@ -1,11 +1,13 @@
 package com.tickets.form.JefeDesarrollo;
 
 import com.tickets.model.Ticket;
+import com.tickets.model.UserSession;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.SQLException;
 
 public class JefeDesarrolloNewRequest extends JFrame {
     private JPanel pnlDesarrolloRequests;
@@ -18,8 +20,8 @@ public class JefeDesarrolloNewRequest extends JFrame {
     private JLabel lblTitle;
     private JLabel lblTitleCase;
 
-    public JefeDesarrolloNewRequest(Ticket ticket) {
-        super("Solicitud de caso");
+    public JefeDesarrolloNewRequest(UserSession user, Ticket ticket) {
+        super("Jefe de Desarrollo - Solicitud de caso");
         setVisible(true);
         setSize(500, 500);
         setMinimumSize(new Dimension(500, 500));
@@ -31,11 +33,23 @@ public class JefeDesarrolloNewRequest extends JFrame {
         lblTitleCase.setText(ticket.getName());
         lblRequester.setText(ticket.getBoss_name() + " | Departamento: " + ticket.getRequester_area_name());
         lblDescription.setText(ticket.getDescription());
+
         btnClose.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 dispose();
+            }
+        });
+        btnAceptar.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                try {
+                    new JefeDesarrolloAceptar(user, ticket);
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         });
     }

@@ -68,7 +68,7 @@ public class JefeDesarrolloMain extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 try {
-                    selectItem(e);
+                    selectItem(user, e);
                 } catch (SQLException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -101,11 +101,10 @@ public class JefeDesarrolloMain extends JFrame {
 
     public void fetch_tickets_request() throws SQLException {
         // Obteniendo la información
-        JefeDesarrollo jefeDesarrollo = new JefeDesarrollo();
-        jefeDesarrollo.fetchNewTickets(user.getId());
+        JefeDesarrollo.fetchNewTickets(user.getId());
 
         // Preparando la información
-        tickets_request = jefeDesarrollo.getTickets_request();
+        tickets_request = JefeDesarrollo.getTickets_request();
 
         // Limpiando el modelo existente
         model.setRowCount(0);
@@ -117,11 +116,12 @@ public class JefeDesarrolloMain extends JFrame {
         }
     }
 
-    public void selectItem(MouseEvent e) throws SQLException {
+    public void selectItem(UserSession user, MouseEvent e) throws SQLException {
 //        String codigo = model.getValueAt(tblTicketsReq.getSelectedRow(), 0).toString();
 //        Ticket element = tickets_request.get(codigo);
 //        System.out.println("Tu padre: " + codigo);
 //        System.out.println(element);
-        new JefeDesarrolloNewRequest(tickets_request.get(model.getValueAt(tblTicketsReq.getSelectedRow(), 0).toString()));
+        Ticket selectedTicket = tickets_request.get(model.getValueAt(tblTicketsReq.getSelectedRow(), 0).toString());
+        new JefeDesarrolloNewRequest(user, selectedTicket);
     }
 }

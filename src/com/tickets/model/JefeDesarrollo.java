@@ -7,9 +7,10 @@ import java.sql.SQLException;
 import java.util.HashMap;
 
 public class JefeDesarrollo {
-    private HashMap<String, Ticket> tickets_request;
+    private static HashMap<String, Ticket> tickets_request;
+    private static HashMap<Integer, String> programmers_names;
 
-    public void fetchNewTickets(int dev_boss_id) throws SQLException {
+    public static void fetchNewTickets(int dev_boss_id) throws SQLException {
         HashMap<String, Ticket> ticketList = new HashMap<>();
 
         Conexion conexion = new Conexion();
@@ -33,17 +34,39 @@ public class JefeDesarrollo {
                     rs.getDate("ticket_created_at")
             );
             ticketList.put(ticket.getCode(), ticket);
-            System.out.println(ticket.getCode());
         }
         setTickets_request(ticketList);
-        System.out.println(getTickets_request());
     }
 
-    public HashMap<String, Ticket> getTickets_request() {
+    public static void fetchProgramerListNames (int dev_boss_id, Ticket t) throws SQLException {
+        HashMap<Integer, String> programmers = new HashMap<>();
+
+        Conexion conexion = new Conexion();
+        String query = "SELECT u.name AS programmer_name, u.id AS programmer_id FROM tickets t INNER JOIN assignments_map a ON t.dev_boss_id = a.boss_id INNER JOIN users_groups ug ON a.users_group_id = ug.group_id INNER JOIN users u ON ug.user_id = u.id WHERE t.dev_boss_id = " + dev_boss_id + " AND u.role_id = 2 AND t.id = " + t.getId() + ";";
+        conexion.setRs(query);
+
+        ResultSet rs = conexion.getRs();
+        while (rs.next()) {
+            int programmer_id = rs.getInt("programmer_id");
+            String programmer_name = rs.getString("programmer_name");
+            programmers.put(programmer_id, programmer_name);
+        }
+        setProgrammers_names(programmers);
+    }
+
+    public static HashMap<String, Ticket> getTickets_request() {
         return tickets_request;
     }
 
-    public void setTickets_request(HashMap<String, Ticket> tickets_request) {
-        this.tickets_request = tickets_request;
+    public static void setTickets_request(HashMap<String, Ticket> new_tickets_request) {
+        tickets_request = new_tickets_request;
+    }
+
+    public static HashMap<Integer, String> getProgrammers_names() {
+        return programmers_names;
+    }
+
+    public static void setProgrammers_names(HashMap<Integer, String> programmers_names) {
+        JefeDesarrollo.programmers_names = programmers_names;
     }
 }
