@@ -40,7 +40,13 @@ public class JefeDesarrolloMain extends JFrame {
         lblTitle.setText("¡Bienvenido, " + user.getName() + "!");
 
         String[] columns = { "Código", "Solicitante", "Título" };
-        model = new DefaultTableModel(null, columns);
+        model = new DefaultTableModel(null, columns) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                // Hacer que todas las celdas sean no editables
+                return false;
+            }
+        };
         tblTicketsReq.setModel(model);
 
         btnSupervisar.addMouseListener(new MouseAdapter() {
@@ -50,6 +56,12 @@ public class JefeDesarrolloMain extends JFrame {
                 try {
                     new JefeDesarrolloSupervisar(user);
                 } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(
+                            pnlDesarrolloJefe,
+                            "Ocurrió un error durante la ejecución:\n" + new RuntimeException(ex).getMessage(),
+                            "ERROR",
+                            JOptionPane.ERROR_MESSAGE
+                    );
                     throw new RuntimeException(ex);
                 }
             }
@@ -70,6 +82,12 @@ public class JefeDesarrolloMain extends JFrame {
                 try {
                     selectItem(user, e);
                 } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(
+                            pnlDesarrolloJefe,
+                            "Ocurrió un error durante la ejecución:\n" + new RuntimeException(ex).getMessage(),
+                            "ERROR",
+                            JOptionPane.ERROR_MESSAGE
+                    );
                     throw new RuntimeException(ex);
                 }
             }
@@ -95,6 +113,7 @@ public class JefeDesarrolloMain extends JFrame {
                     rs.getDate("created_at")
             );
         }
+        conexion.closeConnection();
 
         return user;
     }
@@ -117,11 +136,7 @@ public class JefeDesarrolloMain extends JFrame {
     }
 
     public void selectItem(UserSession user, MouseEvent e) throws SQLException {
-//        String codigo = model.getValueAt(tblTicketsReq.getSelectedRow(), 0).toString();
-//        Ticket element = tickets_request.get(codigo);
-//        System.out.println("Tu padre: " + codigo);
-//        System.out.println(element);
         Ticket selectedTicket = tickets_request.get(model.getValueAt(tblTicketsReq.getSelectedRow(), 0).toString());
-        new JefeDesarrolloNewRequest(user, selectedTicket);
+        new JefeDesarrolloNewRequest(user, selectedTicket, JefeDesarrolloMain.this);
     }
 }

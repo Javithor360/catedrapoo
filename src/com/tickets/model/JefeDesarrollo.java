@@ -2,6 +2,7 @@ package com.tickets.model;
 
 import com.tickets.util.Conexion;
 
+import javax.swing.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -9,12 +10,13 @@ import java.util.HashMap;
 public class JefeDesarrollo {
     private static HashMap<String, Ticket> tickets_request;
     private static HashMap<Integer, String> programmers_names;
+    private static HashMap<Integer, String> testers_names;
 
     public static void fetchNewTickets(int dev_boss_id) throws SQLException {
         HashMap<String, Ticket> ticketList = new HashMap<>();
 
         Conexion conexion = new Conexion();
-        String query = "SELECT t.id AS ticket_id, t.code AS ticket_code, t.name AS ticket_name, t.description AS ticket_description, t.created_at AS ticket_created_at, s.name AS state, u.name AS boss_name, u2.name AS dev_boss_name, a.name AS area_name FROM tickets t LEFT JOIN users u ON t.boss_id = u.id LEFT JOIN users u2 ON t.dev_boss_id = u2.id LEFT JOIN areas a ON t.boss_id = a.boss_id LEFT JOIN states s ON t.state_id = s.id WHERE t.dev_boss_id = " + dev_boss_id + ";";
+        String query = "SELECT t.id AS ticket_id, t.code AS ticket_code, t.name AS ticket_name, t.description AS ticket_description, t.created_at AS ticket_created_at, s.name AS state, u.name AS boss_name, u2.name AS dev_boss_name, a.name AS area_name FROM tickets t LEFT JOIN users u ON t.boss_id = u.id LEFT JOIN users u2 ON t.dev_boss_id = u2.id LEFT JOIN areas a ON t.boss_id = a.boss_id LEFT JOIN states s ON t.state_id = s.id WHERE t.dev_boss_id = " + dev_boss_id + " AND t.state_id = 1;";
         conexion.setRs(query);
 
         ResultSet rs = conexion.getRs();
@@ -28,14 +30,12 @@ public class JefeDesarrollo {
                     rs.getString("area_name"),
                     rs.getString("boss_name"),
                     rs.getString("dev_boss_name"),
-                    null,
-                    null,
-                    null,
                     rs.getDate("ticket_created_at")
             );
             ticketList.put(ticket.getCode(), ticket);
         }
         setTickets_request(ticketList);
+        conexion.closeConnection();
     }
 
     public static void fetchProgramerListNames (int dev_boss_id, Ticket t) throws SQLException {
@@ -52,6 +52,44 @@ public class JefeDesarrollo {
             programmers.put(programmer_id, programmer_name);
         }
         setProgrammers_names(programmers);
+        conexion.closeConnection();
+    }
+
+    public static void fetchTestersListNames (int dev_boss_id, Ticket t) throws SQLException {
+        HashMap<Integer, String> testers = new HashMap<>();
+
+        Conexion conexion = new Conexion();
+        String query = "SELECT u.name AS tester_name, u.id AS tester_id FROM tickets t INNER JOIN assignments_map a ON t.boss_id = a.boss_id INNER JOIN users_groups ug ON a.users_group_id = ug.group_id INNER JOIN users u ON ug.user_id = u.id WHERE t.dev_boss_id = " + dev_boss_id + " AND u.role_id = 4 AND t.id = " + t.getId() + ";";
+        conexion.setRs(query);
+
+        ResultSet rs = conexion.getRs();
+        while (rs.next()) {
+            int tester_id = rs.getInt("tester_id");
+            String tester_name = rs.getString("tester_name");
+            testers.put(tester_id, tester_name);
+        }
+        setTesters_names(testers);
+        conexion.closeConnection();
+    }
+
+    public static void acceptTicket (Ticket t, String observations, int dev_boss_id) throws SQLException {
+        Conexion conexion = new Conexion();
+        String queryUpdate = "UPDATE tickets SET programmer_id = " + t.getProgrammer_id() + ", tester_id = " + t.getTester_id() + ", due_date = \"" + t.getDue_date() + "\", state_id = 3 WHERE id = " + t.getId() + ";";
+        String queryInsert = "INSERT INTO observations (id, name, description, ticket_id, writer_id) VALUES (null, '', \"" + observations + "\", " + t.getId() + ", " + dev_boss_id + ");";
+        conexion.setQuery(queryUpdate);
+        conexion.setQuery(queryInsert);
+
+        conexion.closeConnection();
+    }
+
+    public static void denyTicket (Ticket t, String observations, int dev_boss_id) throws SQLException {
+        Conexion conexion = new Conexion();
+        String queryUpdate = "UPDATE tickets SET state_id = 2 WHERE id = " + t.getId() + ";";
+        String queryInsert = "INSERT INTO observations (id, name, description, ticket_id, writer_id) VALUES (null, '', \"" + observations + "\", " + t.getId() + ", " + dev_boss_id + ");";
+        conexion.setQuery(queryUpdate);
+        conexion.setQuery(queryInsert);
+
+        conexion.closeConnection();
     }
 
     public static HashMap<String, Ticket> getTickets_request() {
@@ -68,5 +106,13 @@ public class JefeDesarrollo {
 
     public static void setProgrammers_names(HashMap<Integer, String> programmers_names) {
         JefeDesarrollo.programmers_names = programmers_names;
+    }
+
+    public static HashMap<Integer, String> getTesters_names() {
+        return testers_names;
+    }
+
+    public static void setTesters_names(HashMap<Integer, String> testers_names) {
+        JefeDesarrollo.testers_names = testers_names;
     }
 }
