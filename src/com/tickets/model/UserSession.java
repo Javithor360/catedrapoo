@@ -18,7 +18,6 @@ public class UserSession {
         this.email = email;
         this.gender = gender;
         this.birthday = birthday;
-        this.profile_pic = profile_pic;
         this.role_id = role_id;
         this.created_at = created_at;
     }

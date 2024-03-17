@@ -55,14 +55,17 @@
               <text value="Nuevas solicitudes de caso"/>
             </properties>
           </component>
-          <component id="f1c89" class="javax.swing.JLabel" binding="lblTableData">
+          <scrollpane id="1dff">
             <constraints border-constraint="Center"/>
-            <properties>
-              <horizontalAlignment value="0"/>
-              <horizontalTextPosition value="0"/>
-              <text value="Cargando datos..."/>
-            </properties>
-          </component>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="36c32" class="javax.swing.JTable" binding="tblTicketsReq">
+                <constraints/>
+                <properties/>
+              </component>
+            </children>
+          </scrollpane>
         </children>
       </grid>
     </children>

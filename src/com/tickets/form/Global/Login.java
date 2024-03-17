@@ -7,7 +7,7 @@ import java.awt.event.ActionListener;
 import java.sql.*;
 import java.sql.SQLException;
 import com.tickets.form.JefeArea.SolicitanteMain;
-import com.tickets.form.JefeDesarrollo.JefeDesarrolloMain;
+//import com.tickets.form.JefeDesarrollo.JefeDesarrolloMain;
 import com.tickets.form.Programadores.ProgramadoresMain;
 import com.tickets.util.Conexion;
 import com.tickets.form.SuperAdmin.*;
