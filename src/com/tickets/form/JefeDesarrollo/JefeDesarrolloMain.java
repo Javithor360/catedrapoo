@@ -24,12 +24,11 @@ public class JefeDesarrolloMain extends JFrame {
     private JTable tblTicketsReq;
     private HashMap<String, Ticket> tickets_request;
     DefaultTableModel model;
-    UserSession user = getUser(); // TEMPORAL
 
-    public JefeDesarrolloMain() throws SQLException {
+    public JefeDesarrolloMain(UserSession user) throws SQLException {
         super("Jefe de Desarrollo - Homepage");
         setVisible(true);
-        setSize(500, 500);
+        setMaximumSize(new Dimension(500, 500));
         setMinimumSize(new Dimension(500, 500));
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(getParent());
@@ -74,7 +73,7 @@ public class JefeDesarrolloMain extends JFrame {
             }
         });
 
-        fetch_tickets_request(); // Llenar la tabla con los datos al inicio
+        fetch_tickets_request(user.getId()); // Llenar la tabla con los datos al inicio
         tblTicketsReq.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -94,33 +93,9 @@ public class JefeDesarrolloMain extends JFrame {
         });
     }
 
-    public static UserSession getUser() throws SQLException {
-        Conexion conexion = new Conexion();
-        UserSession user = null;
-
-        String query = "SELECT * FROM users WHERE `email` = 'jose.aguilar@correo.com' AND `password` = '1234'";
-        conexion.setRs(query);
-
-        ResultSet rs = conexion.getRs();
-        if(rs.next()) {
-            user = new UserSession(
-                    rs.getInt("id"),
-                    rs.getString("name"),
-                    rs.getString("email"),
-                    rs.getString("gender"),
-                    rs.getDate("birthday"),
-                    rs.getInt("role_id"),
-                    rs.getDate("created_at")
-            );
-        }
-        conexion.closeConnection();
-
-        return user;
-    }
-
-    public void fetch_tickets_request() throws SQLException {
+    public void fetch_tickets_request(int user_id) throws SQLException {
         // Obteniendo la información
-        JefeDesarrollo.fetchNewTickets(user.getId());
+        JefeDesarrollo.fetchNewTickets(user_id);
 
         // Preparando la información
         tickets_request = JefeDesarrollo.getTickets_request();

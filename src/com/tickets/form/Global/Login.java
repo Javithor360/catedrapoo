@@ -8,7 +8,9 @@ import java.sql.*;
 import java.sql.SQLException;
 import com.tickets.form.JefeArea.SolicitanteMain;
 import com.tickets.form.JefeDesarrollo.JefeDesarrolloMain;
+import com.tickets.form.Probadores.ProbadoresMain;
 import com.tickets.form.Programadores.ProgramadoresMain;
+import com.tickets.model.UserSession;
 import com.tickets.util.Conexion;
 import com.tickets.form.SuperAdmin.*;
 
@@ -19,19 +21,24 @@ public class Login extends JFrame {
     private JButton btnIngresar;
     private JPanel pnlLogin;
 
-    public Login(String title){
-        super(title);
-        this.setSize(700, 600);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setContentPane(pnlLogin);
-        this.setVisible(true);
-        this.setMinimumSize(new Dimension(600, 500));
-        this.setLocationRelativeTo(getParent());
+    public Login(){
+        super("Sistema de Casos - Inicio de sesión");
+        setVisible(true);
+        setMaximumSize(new Dimension(500, 500));
+        setSize(new Dimension(500, 500));
+        setMinimumSize(new Dimension(500, 500));
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(getParent());
+        setContentPane(pnlLogin);
 
         btnIngresar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                btnIngresar();
+                try {
+                    btnIngresar();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         });
 
@@ -44,56 +51,49 @@ public class Login extends JFrame {
 
     }
 
-    private void btnIngresar(){
+    private void btnIngresar() throws SQLException {
         try{
-            Conexion conexion = new Conexion();
-
-            String usuario = txtUsuario.getText().trim();
+            String user = txtUsuario.getText().trim();
             char[] pass = txtpass.getPassword();
             String contrasena = new String(pass);
 
-            if (usuario.equals("admin") && contrasena.equals("superadmin")){
+            if (user.equals("admin") && contrasena.equals("superadmin")){
                 dispose();
                 JOptionPane.showMessageDialog(null, "Bienvenido Super Admin!");
                 new SuperAdmin().setVisible(true);
-            }else{
-                /*
-                 * EL LOGIN NO SIRVE: los campos y la tabla cambiaron y no se como se va a redirigir a así que no se puede entrar a cosas
-                 * que no sean las del superAdmin :D
-                 * */
-                String consulta = "SELECT * FROM empleados WHERE usuario = '" + usuario + "' AND contrasena = '" + contrasena + "'";
+            } else {
+                Conexion conexion = new Conexion();
+                UserSession userInfo;
 
-                conexion.setQuery(consulta);
+                String query = "SELECT * FROM users WHERE email = \"" + user + "\" AND password = \"" + contrasena + "\";";
+                conexion.setRs(query);
 
-                ResultSet resultSet = conexion.getRs();
+                ResultSet rs = conexion.getRs();
+                if (rs.next()) {
+                    userInfo = new UserSession(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("email"),
+                        rs.getString("gender"),
+                        rs.getDate("birthday"),
+                        rs.getInt("role_id"),
+                        rs.getDate("created_at")
+                    );
 
-                if (resultSet.next()) {
-                    int area = resultSet.getInt("areaId");
-                    int jefeArea = resultSet.getInt("jefeArea");
-
-                    if (area == 1 && (jefeArea == 1 || resultSet.wasNull())) {
-                        dispose();
-                        JOptionPane.showMessageDialog(null, "Bienvenido Jefe de Area");
-                        // new JefeDesarrolloMain("Área Desarrollo Jefe").setVisible(true);
-                    } else if (area == 1 && (jefeArea == 0 || resultSet.wasNull())){
-                        dispose();
-                        JOptionPane.showMessageDialog(null, "Bienvenido al Area de Desarrollo");
-                        new ProgramadoresMain("Área Desarrollo").setVisible(true);
-                    }else if (area == 3 && (jefeArea == 3 || resultSet.wasNull())) {
-                        dispose();
-                        JOptionPane.showMessageDialog(null, "Bienvenido al área Solicitante");
-                        new SolicitanteMain().setVisible(true);
+                    if (userInfo.getRole_id() == 1) {
+                        new JefeDesarrolloMain(userInfo);
+                    } else if (userInfo.getRole_id() == 2) {
+                        new ProgramadoresMain();
+                    } else if (userInfo.getRole_id() == 3) {
+                        new SolicitanteMain();
+                    } else if (userInfo.getRole_id() == 4) {
+                        new ProbadoresMain();
                     }
-                } else {
-                    JOptionPane.showMessageDialog(null, "Usuario no encontrado");
-                    dispose();
-                    new SolicitanteMain().setVisible(true);
                 }
+                conexion.closeConnection();
             }
 
-
-
-        }catch (SQLException e){
+        } catch (SQLException e){
             System.out.println("ERROR:Fallo en SQL: "+ e.getMessage());
             System.exit(0);
         }

@@ -82,7 +82,7 @@ public class JefeDesarrolloNewRequest extends JFrame {
                                 JOptionPane.INFORMATION_MESSAGE
                         );
                         dispose();
-                        mainComponent.fetch_tickets_request();
+                        mainComponent.fetch_tickets_request(user.getId());
                     } catch (SQLException ex) {
                         JOptionPane.showMessageDialog(
                                 pnlDesarrolloRequests,

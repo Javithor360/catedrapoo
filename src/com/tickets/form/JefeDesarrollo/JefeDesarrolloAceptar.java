@@ -55,7 +55,7 @@ public class JefeDesarrolloAceptar extends JFrame {
                     JOptionPane.showMessageDialog(pnlAceptarTicket, "El caso ha sido aceptado y asignado correctamente.");
                     dispose();
                     parentComponent.dispose();
-                    mainComponent.fetch_tickets_request();
+                    mainComponent.fetch_tickets_request(user.getId());
                 } catch (SQLException ex) {
                     JOptionPane.showMessageDialog(
                             pnlAceptarTicket,
