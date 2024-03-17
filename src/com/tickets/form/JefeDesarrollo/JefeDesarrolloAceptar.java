@@ -10,7 +10,10 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,9 +37,6 @@ public class JefeDesarrolloAceptar extends JFrame {
         setContentPane(pnlAceptarTicket);
 
         fillInputs(user.getId(), ticket, observaciones);
-
-
-//        System.out.println(value);
 
         btnSalir.addMouseListener(new MouseAdapter() {
             @Override
@@ -89,15 +89,26 @@ public class JefeDesarrolloAceptar extends JFrame {
     }
 
     public void insertData(Ticket t, int dev_boss_id) throws SQLException {
-        int programmer_id = ((ComboItem)cmbProgramadores.getSelectedItem()).getValue();
-        int tester_id = ((ComboItem)cmbProbadores.getSelectedItem()).getValue();
-        String observations = txtObservaciones.getText();
-        LocalDate due_date = LocalDate.parse(txtFecha.getText());
 
-        t.setProgrammer_id(programmer_id);
-        t.setTester_id(tester_id);
-        t.setDue_date(due_date);
+        try {
+            int programmer_id = ((ComboItem)cmbProgramadores.getSelectedItem()).getValue();
+            int tester_id = ((ComboItem)cmbProbadores.getSelectedItem()).getValue();
+            String observations = txtObservaciones.getText();
+            String date = txtFecha.getText();
 
-        JefeDesarrollo.acceptTicket(t, observations, dev_boss_id);
+            t.setProgrammer_id(programmer_id);
+            t.setTester_id(tester_id);
+            t.setDue_date(date);
+
+            JefeDesarrollo.acceptTicket(t, observations, dev_boss_id);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(
+                    pnlAceptarTicket,
+                    "Ocurrió un error durante la ejecución:\n" + e.getMessage(),
+                    "ERROR",
+                    JOptionPane.ERROR_MESSAGE
+            );
+            throw new RuntimeException(e);
+        }
     }
 }

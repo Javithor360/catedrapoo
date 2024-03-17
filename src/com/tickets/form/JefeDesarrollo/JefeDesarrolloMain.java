@@ -47,6 +47,7 @@ public class JefeDesarrolloMain extends JFrame {
             }
         };
         tblTicketsReq.setModel(model);
+        fetch_tickets_request(user.getId()); // Llenar la tabla con los datos al inicio
 
         btnSupervisar.addMouseListener(new MouseAdapter() {
             @Override
@@ -73,13 +74,12 @@ public class JefeDesarrolloMain extends JFrame {
             }
         });
 
-        fetch_tickets_request(user.getId()); // Llenar la tabla con los datos al inicio
         tblTicketsReq.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 try {
-                    selectItem(user, e);
+                    selectItem(user);
                 } catch (SQLException ex) {
                     JOptionPane.showMessageDialog(
                             pnlDesarrolloJefe,
@@ -103,15 +103,28 @@ public class JefeDesarrolloMain extends JFrame {
         // Limpiando el modelo existente
         model.setRowCount(0);
 
-        // Iterando sobre el HashMap y agregando datos al modelo
-        for (Map.Entry<String, Ticket> entry : tickets_request.entrySet()) {
-            Ticket ticket = entry.getValue();
-            model.addRow(new Object[]{ticket.getCode(), ticket.getBoss_name(), ticket.getName()});
+        if(!tickets_request.isEmpty()) {
+            // Iterando sobre el HashMap y agregando datos al modelo
+            for (Map.Entry<String, Ticket> entry : tickets_request.entrySet()) {
+                Ticket ticket = entry.getValue();
+                model.addRow(new Object[]{ticket.getCode(), ticket.getBoss_name(), ticket.getName()});
+            }
+        } else {
+            model.addRow(new Object[]{ "No", "hay", "datos..." });
         }
     }
 
-    public void selectItem(UserSession user, MouseEvent e) throws SQLException {
+    public void selectItem(UserSession user) throws SQLException {
         Ticket selectedTicket = tickets_request.get(model.getValueAt(tblTicketsReq.getSelectedRow(), 0).toString());
-        new JefeDesarrolloNewRequest(user, selectedTicket, JefeDesarrolloMain.this);
+        if(selectedTicket != null) {
+            new JefeDesarrolloNewRequest(user, selectedTicket, JefeDesarrolloMain.this);
+        } else {
+            JOptionPane.showMessageDialog(
+                    pnlDesarrolloJefe,
+                    "No hay datos que mostrar...",
+                    "ERROR",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
     }
 }

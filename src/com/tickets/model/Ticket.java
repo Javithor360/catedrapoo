@@ -10,6 +10,7 @@ public class Ticket {
     private String description;
     private int state_id;
     private String state;
+    private String observations;
     private String requester_area_name;
     private String boss_name;
     private String dev_boss_name;
@@ -17,10 +18,10 @@ public class Ticket {
     private String tester_name;
     private int programmer_id;
     private String programmer_name;
-    private LocalDate due_date;
-    private Date created_at;
+    private String due_date;
+    private String created_at;
 
-    public Ticket(int id, String code, String name, String description, String state, String requester_area_name, String boss_name, String dev_boss_name, Date created_at) {
+    public Ticket(int id, String code, String name, String description, String state, String requester_area_name, String boss_name, String dev_boss_name, String created_at) {
         this.id = id;
         this.code = code;
         this.name = name;
@@ -29,6 +30,22 @@ public class Ticket {
         this.requester_area_name = requester_area_name;
         this.boss_name = boss_name;
         this.dev_boss_name = dev_boss_name;
+        this.created_at = created_at;
+    }
+
+    public Ticket(int id, String code, String name, String description, String state, String observations, String requester_area_name, String boss_name, String dev_boss_name, String tester_name, String programmer_name, String due_date, String created_at) {
+        this.id = id;
+        this.code = code;
+        this.name = name;
+        this.description = description;
+        this.state = state;
+        this.observations = observations;
+        this.requester_area_name = requester_area_name;
+        this.boss_name = boss_name;
+        this.dev_boss_name = dev_boss_name;
+        this.tester_name = tester_name;
+        this.programmer_name = programmer_name;
+        this.due_date = due_date;
         this.created_at = created_at;
     }
 
@@ -72,11 +89,11 @@ public class Ticket {
         return programmer_name;
     }
 
-    public LocalDate getDue_date() {
+    public String getDue_date() {
         return due_date;
     }
 
-    public Date getCreated_at() {
+    public String getCreated_at() {
         return created_at;
     }
 
@@ -100,7 +117,7 @@ public class Ticket {
         this.programmer_id = programmer_id;
     }
 
-    public void setDue_date(LocalDate due_date) {
+    public void setDue_date(String due_date) {
         this.due_date = due_date;
     }
 
@@ -110,5 +127,13 @@ public class Ticket {
 
     public void setState_id(int state_id) {
         this.state_id = state_id;
+    }
+
+    public String getObservations() {
+        return observations;
+    }
+
+    public void setObservations(String observations) {
+        this.observations = observations;
     }
 }
