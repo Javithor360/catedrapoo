@@ -3,15 +3,16 @@ package com.tickets.model;
 import java.util.Date;
 
 public class UserSession {
-    private int id;
-    private String name;
-    private String email;
-    private Date birthday;
-    private String gender;
-    private int role_id;
-    private Date created_at;
+    protected int id;
+    protected String name;
+    protected String email;
+    protected Date birthday;
+    protected String gender;
+    protected String profile_pic;
+    protected int role_id;
+    protected Date created_at;
 
-    public UserSession(int id, String name, String email, String gender, Date birthday, int role_id, Date created_at) {
+    public UserSession(int id, String name, String email, String gender, Date birthday, String profile_pic, int role_id, Date created_at) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -39,6 +40,10 @@ public class UserSession {
 
     public String getGender() {
         return gender;
+    }
+
+    public String getProfile_pic() {
+        return profile_pic;
     }
 
     public int getRole_id() {

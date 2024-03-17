@@ -1,11 +1,10 @@
 package com.tickets.form.SuperAdmin.Clases;
 
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Date;
 
 public class User {
-    private long id;
+    private int id;
     private String name;
     private String email;
     private String password;
@@ -15,15 +14,13 @@ public class User {
     private Timestamp createdAt;
 
 
-    public User(int id, String name, String email, String password, String gender, Date birthday, int role, Timestamp creado) {
+    public User(int id, String name, String email, String gender, Date birthday, int role) {
         this.id = id;
         this.name = name;
         this.email = email;
-        this.password = password;
         this.gender = gender;
         this.birthday = birthday;
         this.role = role;
-        this.createdAt = creado;
     }
 
     public User( String name, String email, String password, String gender, Date birthday, int role, Timestamp creado) {
@@ -37,9 +34,10 @@ public class User {
     }
 
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
+    public int getId() {return id;}
 
     public String getName() {
         return name;
@@ -73,9 +71,7 @@ public class User {
         this.gender = gender;
     }
 
-    public Date getBirthday() {
-        return birthday;
-    }
+    public Date getBirthday() { return birthday; }
 
     public void setBirthday(Date birthday) {
         this.birthday = birthday;

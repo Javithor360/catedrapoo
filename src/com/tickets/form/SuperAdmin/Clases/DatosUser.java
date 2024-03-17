@@ -8,16 +8,15 @@ public class DatosUser {
     private final String select
             = "SELECT p.id,p.name, p.email, p.gender, o.name, p.birthday, p.created_at FROM users p INNER JOIN roles o ON p.role_id = o.id ";
 
-    private final String insert
-            = "INSERT INTO users (name, email, password, gender, birthday, role_id, created_at";
-    DefaultTableModel dtm = new DefaultTableModel();
-    PreparedStatement stmt = null;
+    private final String insert =
+           "INSERT INTO users (name, email, password, gender, birthday, role_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
+    private final String update =
+            "UPDATE users SET name=?, email=?, gender=?, birthday=?, role_id=? WHERE id=?";
+
+    private final String delete = "DELETE FROM users WHERE id = ?";
 
     public String insert(User personaDatos) {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
         String mensaje = "" ;
         try{
             Conexion conexion = new Conexion();
@@ -32,20 +31,73 @@ public class DatosUser {
             pstmt.setInt(6, personaDatos.getRole());
             pstmt.setTimestamp(7, new java.sql.Timestamp(personaDatos.getCreatedAt().getTime()));
 
-            pstmt.executeUpdate();
+            int rows = pstmt.executeUpdate();
 
-            pstmt.close();
-            conexion.closeConnection();
-
-            mensaje = "Registro insertado correctamente en la tabla users.";
+            if (rows > 0) {
+                mensaje = "Registro insertado correctamente.";
+            } else {
+                mensaje = "Error al insertar el registro";
+            }
 
             JOptionPane.showMessageDialog(null, mensaje);
 
+            conexion.closeConnection();
+
         }catch (SQLException e){
-            System.out.println("ERROR:Fallo en SQL: "+ e.getMessage());
+            System.out.println("ERROR:Fallo en SQL INSERT: "+ e.getMessage());
             System.exit(0);
         }
 
+        return mensaje;
+    }
+
+    public String update(User personaDatos) {
+        PreparedStatement stmt = null;
+
+        String mensaje = "" ;
+        int rows = 0;
+        try {
+            Conexion conexion = new Conexion();
+            stmt = conexion.setQuery(update);
+            stmt.setString(1, personaDatos.getName());
+            stmt.setString(2, personaDatos.getEmail());
+            stmt.setString(3, personaDatos.getGender());
+            stmt.setDate(4, new java.sql.Date(personaDatos.getBirthday().getTime()));
+            stmt.setInt(5, personaDatos.getRole());
+            stmt.setInt(6, personaDatos.getId());
+            rows = stmt.executeUpdate();
+
+            if (rows > 0) {
+                mensaje = "Registro editado correctamente";
+            } else {
+                mensaje = "Error al insertar el registro";
+            }
+            JOptionPane.showMessageDialog(null, mensaje);
+        } catch (SQLException e) {
+            System.out.println("ERROR: Fallo en SQL de UPDATE: " + e.getMessage());
+            System.exit(0);
+        }
+        return mensaje;
+    }
+    public String delete(int idPersona) {
+        String mensaje = "" ;
+        PreparedStatement stmt = null;
+        int rows = 0;
+        try {
+            Conexion conn = new Conexion();
+            stmt = conn.setQuery(delete);
+            stmt.setInt(1, idPersona);
+            rows = stmt.executeUpdate();
+            if (rows > 0) {
+                mensaje = "Registro Eliminado correctamente!";
+            } else {
+                mensaje = "Error al eliminar el registro";
+            }
+            JOptionPane.showMessageDialog(null, mensaje);
+        } catch (SQLException e) {
+            System.out.println("ERROR: Fallo en SQL de UPDATE: " + e.getMessage());
+            System.exit(0);
+        }
         return mensaje;
     }
 
@@ -59,7 +111,7 @@ public class DatosUser {
             rs = stmt.executeQuery();
             ResultSetMetaData meta = rs.getMetaData();
             int numberOfColumns = meta.getColumnCount();
-
+            //Formando encabezado
             for (int i = 1; i <= numberOfColumns; i++) {
                 dtm.addColumn(meta.getColumnLabel(i));
             }
@@ -74,7 +126,8 @@ public class DatosUser {
 
             conn.closeConnection();
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("ERROR:Fallo en SQL SELECT: "+ e.getMessage());
+            System.exit(0);
         }
         return dtm;
     }
