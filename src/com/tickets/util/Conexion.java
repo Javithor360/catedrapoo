@@ -14,8 +14,7 @@ public class Conexion {
             // Accediendo al driver de MySQL (JDBC)
             Class.forName("com.mysql.cj.jdbc.Driver");
             // Obteniendo la conexión con la base de datos
-            connection = DriverManager.getConnection(
-                    "jdbc:mysql://localhost:3306/catedrapoo",
+            connection = DriverManager.getConnection("jdbc:mysql://localhost/catedrapoo",
                     "root",
                     ""
             );
@@ -38,7 +37,7 @@ public class Conexion {
             this.rs = s.executeQuery(sql);
         } catch (SQLException e) {
             // Login o sentencia SQL errónea
-            System.out.println("[ERROR] Fallo en SQL: \n" + e.getMessage());
+            System.out.println("[ERROR] Fallo en SQL RS: \n" + e.getMessage());
         }
     }
 
@@ -46,8 +45,15 @@ public class Conexion {
         Método que recibe un SQL como parámetro
         que sea UPDATE, INSERT o DELETE
      */
-    public void setQuery(String sql) throws SQLException {
-        this.s.executeUpdate(sql);
+    public PreparedStatement setQuery(String sql) throws SQLException {
+        PreparedStatement pstmt = null;
+        try {
+            pstmt = connection.prepareStatement(sql);
+        } catch (SQLException e) {
+            System.out.println("[ERROR] Fallo en SQL query: \n" + e.getMessage());
+            throw e; // Relanza la excepción para manejarla fuera de la clase Conexion
+        }
+        return pstmt;
     }
 
     // Método que cierra la conexión
