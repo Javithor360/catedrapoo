@@ -1,14 +1,12 @@
 package com.tickets.form.SuperAdmin;
 
 import com.tickets.form.Global.Login;
-import com.tickets.util.Conexion;
-import com.tickets.form.Global.*;
+import com.tickets.form.SuperAdmin.AreaFuncional.AreaFuncionalMain;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.Console;
 import java.sql.SQLException;
 
 public class SuperAdmin extends JFrame{
@@ -43,6 +41,19 @@ public class SuperAdmin extends JFrame{
             }
         });
 
+        btnArea.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+                JFrame frame = null;
+                try {
+                    frame = new AreaFuncionalMain();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+                frame.setVisible(true);
+            }
+        });
     }
 
     private void btnSalir(){
