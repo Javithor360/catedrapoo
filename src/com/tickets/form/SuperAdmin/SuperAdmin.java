@@ -47,7 +47,7 @@ public class SuperAdmin extends JFrame{
 
     private void btnSalir(){
         dispose();
-        JFrame frame = new Login("Login");
+        JFrame frame = new Login();
         frame.setVisible(true);
     }
 

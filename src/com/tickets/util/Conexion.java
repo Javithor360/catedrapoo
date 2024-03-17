@@ -14,7 +14,7 @@ public class Conexion {
             // Accediendo al driver de MySQL (JDBC)
             Class.forName("com.mysql.cj.jdbc.Driver");
             // Obteniendo la conexión con la base de datos
-            connection = DriverManager.getConnection("jdbc:mysql://localhost/catedrapoo",
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/catedrapoo",
                     "root",
                     ""
             );
@@ -53,6 +53,7 @@ public class Conexion {
             System.out.println("[ERROR] Fallo en SQL query: \n" + e.getMessage());
             throw e; // Relanza la excepción para manejarla fuera de la clase Conexion
         }
+        System.out.println(pstmt);
         return pstmt;
     }
 

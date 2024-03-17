@@ -7,12 +7,6 @@
     <properties/>
     <border type="none"/>
     <children>
-      <grid id="89890" layout-manager="BorderLayout" hgap="0" vgap="0">
-        <constraints border-constraint="North"/>
-        <properties/>
-        <border type="none"/>
-        <children/>
-      </grid>
       <grid id="e3ef8" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
         <constraints border-constraint="South"/>
         <properties/>
@@ -34,20 +28,30 @@
           <component id="3d977" class="javax.swing.JLabel">
             <constraints border-constraint="North"/>
             <properties>
-              <font name="Consolas" size="18" style="3"/>
+              <font name="Consolas" size="18" style="1"/>
               <horizontalAlignment value="0"/>
               <horizontalTextPosition value="0"/>
               <text value="Supervisión del equipo de programadores"/>
             </properties>
           </component>
-          <component id="a2fc7" class="javax.swing.JLabel" binding="lblTableData">
+          <grid id="e0ed2" layout-manager="BorderLayout" hgap="0" vgap="0">
             <constraints border-constraint="Center"/>
-            <properties>
-              <horizontalAlignment value="0"/>
-              <horizontalTextPosition value="0"/>
-              <text value="Obteniendo datos..."/>
-            </properties>
-          </component>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <scrollpane id="45d47">
+                <constraints border-constraint="Center"/>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="a6448" class="javax.swing.JTable" binding="tblTicketDisplay">
+                    <constraints/>
+                    <properties/>
+                  </component>
+                </children>
+              </scrollpane>
+            </children>
+          </grid>
         </children>
       </grid>
     </children>
