@@ -5,6 +5,8 @@ import com.tickets.util.Conexion;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 
 public class Programador {
@@ -66,6 +68,19 @@ public class Programador {
                 conexion.closeConnection();
             }
         }
+    }
+
+    public static void newLog (Bitacora b, int programmer_id) throws SQLException {
+        Conexion conexion = new Conexion();
+        PreparedStatement stmt;
+
+        String query = "INSERT INTO ticket_logs (id, code_ticket, name, description, percent, programmer_id, created_at) VALUES (null, \"" + b.getCode() + "\", \"" + b.getName() + "\", \"" + b.getDescription() + "\", " + b.getPercent() + ", " + programmer_id + ", \"" + b.getCreated_at() + "\");";
+
+        stmt = conexion.setQuery(query);
+        stmt.executeUpdate();
+        stmt.close();
+
+        conexion.closeConnection();
     }
 
     public static HashMap<String, Ticket> getAssigned_tickets() {

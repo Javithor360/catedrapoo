@@ -40,7 +40,6 @@ public class ProgramadoresDetalle extends JFrame {
         setContentPane(pnlDetalle);
 
         lblTitle.setText("Detalles del caso " + ticket.getCode());
-        txtProgreso.setText(ticket.getState() + " (" + get_latest_percent(ticket) + "%)");
         txtFechaCreacion.setText(ticket.getCreated_at());
         txtFechaEntrega.setText(ticket.getDue_date());
         txtSolicitante.setText(ticket.getBoss_name() + " (Depto. " + ticket.getRequester_area_name() + ")");
@@ -73,7 +72,11 @@ public class ProgramadoresDetalle extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                select_item();
+
+                if(model.getValueAt(tblBitacora.getSelectedRow(), 0).toString().startsWith("Agregar")) {
+                    new ProgramadoresBitacora(user, ticket, ProgramadoresDetalle.this, mainComponent);
+                    fetch_logs(ticket);
+                }
             }
         });
     }
@@ -92,21 +95,20 @@ public class ProgramadoresDetalle extends JFrame {
         }
     }
 
-    public void fetch_logs (Ticket t) {
+    public void fetch_logs(Ticket t) {
         model.setRowCount(0);
 
-        if(!t.getLogs().isEmpty()) {
+        txtProgreso.setText(t.getState() + " (" + get_latest_percent(t) + "%)");
+
+        if (!t.getLogs().isEmpty()) {
             for (Map.Entry<Integer, Bitacora> entry : t.getLogs().entrySet()) {
                 Bitacora bitacora = entry.getValue();
-                model.addRow(new Object[]{ bitacora.getCreated_at(), bitacora.getPercent(), bitacora.getProgrammer_name(), bitacora.getName(), bitacora.getDescription() });
+                model.addRow(new Object[]{bitacora.getCreated_at(), bitacora.getPercent(), bitacora.getProgrammer_name(), bitacora.getName(), bitacora.getDescription()});
             }
-            model.addRow(new Object[]{ "Agregar", "nuevo", "registro", "de", "bitácora..." });
         } else {
-            model.addRow(new Object[]{ "Aún", "no", "hay", "bitácoras", "registradas..." });
+            model.addRow(new Object[]{"Aún", "no", "hay", "bitácoras", "registradas..."});
         }
+        model.addRow(new Object[]{"Agregar", "nuevo", "registro", "de", "bitácora..."});
     }
 
-    public void select_item () {
-        System.out.println(model.getValueAt(tblBitacora.getSelectedRow(), 0).toString().startsWith("Agregar"));
-    }
 }

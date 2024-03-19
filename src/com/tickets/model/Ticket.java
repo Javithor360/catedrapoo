@@ -49,6 +49,14 @@ public class Ticket {
         this.created_at = created_at;
     }
 
+    public void addBitacora (Bitacora bitacora) {
+        if(logs == null) {
+            logs = new HashMap<>();
+        }
+
+        logs.put(bitacora.getId(), bitacora);
+    }
+
     public int getId() {
         return id;
     }
