@@ -12,7 +12,7 @@ public class JefeArea extends UserSession {
     // Atributos y Constructor ====================
     private static HashMap<Integer, JefeArea> available_bosses;
 
-    public JefeArea(Integer id, String name, String email, String gender, Date birthday, Integer role_id, Date created_at) {
+    public JefeArea(int id, String name, String email, String gender, Date birthday, Integer role_id, Date created_at) {
         super(id, name, email, gender, birthday, role_id, created_at);
     }
 
