@@ -1,6 +1,7 @@
 package com.tickets.form.Programadores;
 
 import com.tickets.model.Bitacora;
+import com.tickets.model.Programador;
 import com.tickets.model.Ticket;
 import com.tickets.model.UserSession;
 
@@ -9,6 +10,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.List;
 
@@ -79,6 +81,34 @@ public class ProgramadoresDetalle extends JFrame {
                 }
             }
         });
+
+        btnEntregar.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                try {
+                    if (submitTicket(ticket, user.getId())) {
+                        JOptionPane.showMessageDialog(
+                                pnlDetalle,
+                                "¡El caso ha sido entregado correctamente!",
+                                "ÉXITO",
+                                JOptionPane.INFORMATION_MESSAGE
+                        );
+
+                        mainComponent.fetch_tickets(user.getId());
+                        dispose();
+                    }
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(
+                            pnlDetalle,
+                            "Ocurrió un error durante la ejecución:\n" + ex.getMessage(),
+                            "ERROR",
+                            JOptionPane.ERROR_MESSAGE
+                    );
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
     }
 
     // Obtener el valor del porcentaje en el registro más reciente en base a su fecha de creación
@@ -108,7 +138,24 @@ public class ProgramadoresDetalle extends JFrame {
         } else {
             model.addRow(new Object[]{"Aún", "no", "hay", "bitácoras", "registradas..."});
         }
-        model.addRow(new Object[]{"Agregar", "nuevo", "registro", "de", "bitácora..."});
+        if(Objects.equals(t.getState(), "En desarrollo") || Objects.equals(t.getState(), "Devuelto con observaciones")) {
+            model.addRow(new Object[]{"Agregar", "nuevo", "registro", "de", "bitácora..."});
+        }
+    }
+
+    public boolean submitTicket (Ticket t, int programmer_id) throws SQLException {
+        if(!(get_latest_percent(t) < 100)) {
+            Programador.submitTicket(t.getId(), programmer_id);
+            return true;
+        } else {
+            JOptionPane.showMessageDialog(
+                    pnlDetalle,
+                    "Para poder entregar este caso necesitas registrar un 100% de avances en la bitácora.",
+                    "ERROR",
+                    JOptionPane.ERROR_MESSAGE
+            );
+            return false;
+        }
     }
 
 }
