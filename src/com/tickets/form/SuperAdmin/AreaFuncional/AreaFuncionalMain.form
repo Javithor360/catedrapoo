@@ -39,7 +39,7 @@
                   <text value="Agregar"/>
                 </properties>
               </component>
-              <component id="833d0" class="javax.swing.JButton" binding="btnLogout">
+              <component id="833d0" class="javax.swing.JButton" binding="btnSalir">
                 <constraints/>
                 <properties>
                   <text value="Salir"/>

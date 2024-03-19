@@ -1,14 +1,13 @@
 package com.tickets.form.SuperAdmin.AreaFuncional;
 
+import com.tickets.form.SuperAdmin.SuperAdmin;
 import com.tickets.model.Area;
-import com.tickets.util.Conexion;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +16,7 @@ public class AreaFuncionalMain extends JFrame {
     private JPanel pnlAreaFuncional;
     private JLabel lblTitle;
     private JButton btnAgregar;
-    private JButton btnLogout;
+    private JButton btnSalir;
     private JTable tblAreas;
 
     private HashMap<Integer, Area> areas_list;
@@ -45,16 +44,23 @@ public class AreaFuncionalMain extends JFrame {
         tblAreas.setModel(model);
         get_all_areas();
 
-        btnLogout.addActionListener(new ActionListener() {
+        btnSalir.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                btnSalir();
             }
         });
         btnAgregar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                dispose();
+                JFrame frame = null;
+                try {
+                    frame = new AreaFuncionalNueva();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+                frame.setVisible(true);
             }
         });
     }
@@ -80,5 +86,11 @@ public class AreaFuncionalMain extends JFrame {
         } else {
             model.addRow(new Object[]{"Sin","Areas","Disponibles","..."});
         }
+    }
+
+    private void btnSalir(){
+        dispose();
+        JFrame frame = new SuperAdmin();
+        frame.setVisible(true);
     }
 }

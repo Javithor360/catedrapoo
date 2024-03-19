@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.util.HashMap;
 
 public class Area {
+
+    // Atributos ===================================
     private int id;
     private String prefix_code;
     private String name;
@@ -24,7 +26,7 @@ public class Area {
         this.created_at = created_at;
     }
 
-    // Atributos ===================================
+    // Getters ====================================
 
     public int getId() {
         return id;
