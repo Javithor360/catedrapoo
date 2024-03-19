@@ -1,7 +1,6 @@
 package com.tickets.model;
 
-import java.time.LocalDate;
-import java.util.Date;
+import java.util.HashMap;
 
 public class Ticket {
     private int id;
@@ -11,6 +10,7 @@ public class Ticket {
     private int state_id;
     private String state;
     private String observations;
+    private HashMap<Integer, Bitacora> logs;
     private String requester_area_name;
     private String boss_name;
     private String dev_boss_name;
@@ -135,5 +135,13 @@ public class Ticket {
 
     public void setObservations(String observations) {
         this.observations = observations;
+    }
+
+    public HashMap<Integer, Bitacora> getLogs() {
+        return logs;
+    }
+
+    public void setLogs(HashMap<Integer, Bitacora> logs) {
+        this.logs = logs;
     }
 }

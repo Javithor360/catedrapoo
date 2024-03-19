@@ -1,4 +1,4 @@
-package com.tickets.form.JefeDesarrollo;
+package com.tickets.form.Programadores;
 
 import com.tickets.model.Bitacora;
 import com.tickets.model.Ticket;
@@ -12,34 +12,42 @@ import java.awt.event.MouseEvent;
 import java.util.*;
 import java.util.List;
 
-public class JefeDesarrolloDetalle extends JFrame {
+public class ProgramadoresDetalle extends JFrame {
     private JPanel pnlDetalle;
-    private JButton btnRegresar;
-    private JTextField txtEstado;
-    private JTextField txtEncargado;
-    private JTextField txtProbador;
-    private JTextField txtFecha;
-    private JTextArea txaObservaciones;
-    private JTable tblBitacora;
+    private JButton btnVolver;
+    private JButton btnEntregar;
     private JLabel lblTitle;
+    private JTextField txtProgreso;
+    private JTextField txtFechaEntrega;
     private JTextField txtSolicitante;
+    private JTextArea txaDescripcion;
+    private JTextField txtTitle;
+    private JTextField txtProbador;
+    private JTextArea txaObservaciones;
+    private JTextField txtFechaCreacion;
+    private JTextField txtJefeDesarrollo;
+    private JTable tblBitacora;
     DefaultTableModel model;
 
-    public JefeDesarrolloDetalle (UserSession user, Ticket ticket) {
-        super("Jefe de Desarrollo - Monitoreo de ticket");
+    public ProgramadoresDetalle (UserSession user, Ticket ticket, ProgramadoresMain mainComponent) {
+        super("Programadores - Información de caso");
         setVisible(true);
-        setSize(500, 500);
-        setMinimumSize(new Dimension(500, 500));
+        setSize(900, 500);
+        setMinimumSize(new Dimension(900, 500));
+        setPreferredSize(new Dimension(900, 500));
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(getParent());
         setContentPane(pnlDetalle);
 
-        lblTitle.setText("Caso " + ticket.getCode());
-        txtEstado.setText(ticket.getState() + "(" + get_latest_percent(ticket) + "%)");
-        txtSolicitante.setText(ticket.getBoss_name() + " (Depto. " + ticket.getRequester_area_name() + " )");
-        txtEncargado.setText((ticket.getProgrammer_name() != null ? ticket.getProgrammer_name() : "Sin asignación..."));
-        txtProbador.setText((ticket.getTester_name() != null ? ticket.getTester_name() : "Sin asignación..."));
-        txtFecha.setText("Creado el: " + ticket.getCreated_at() + " | Fecha de entrega: " + ticket.getDue_date().toString());
+        lblTitle.setText("Detalles del caso " + ticket.getCode());
+        txtProgreso.setText(ticket.getState() + " (" + get_latest_percent(ticket) + "%)");
+        txtFechaCreacion.setText(ticket.getCreated_at());
+        txtFechaEntrega.setText(ticket.getDue_date());
+        txtSolicitante.setText(ticket.getBoss_name() + " (Depto. " + ticket.getRequester_area_name() + ")");
+        txtProbador.setText(ticket.getTester_name());
+        txtJefeDesarrollo.setText(ticket.getDev_boss_name());
+        txtTitle.setText(ticket.getName());
+        txaDescripcion.setText(ticket.getDescription());
         txaObservaciones.setText(ticket.getObservations());
 
         String[] columns = { "Fecha", "Progreso", "Autor", "Título", "Descripción" };
@@ -53,17 +61,24 @@ public class JefeDesarrolloDetalle extends JFrame {
         tblBitacora.setModel(model);
         fetch_logs(ticket);
 
-        // aquí iría un método para obtener la bitácora y sus observaciones
-
-        btnRegresar.addMouseListener(new MouseAdapter() {
+        btnVolver.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 dispose();
             }
         });
+
+        tblBitacora.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                select_item();
+            }
+        });
     }
 
+    // Obtener el valor del porcentaje en el registro más reciente en base a su fecha de creación
     public double get_latest_percent (Ticket t) {
         HashMap<Integer, Bitacora> bMap = t.getLogs();
 
@@ -85,8 +100,13 @@ public class JefeDesarrolloDetalle extends JFrame {
                 Bitacora bitacora = entry.getValue();
                 model.addRow(new Object[]{ bitacora.getCreated_at(), bitacora.getPercent(), bitacora.getProgrammer_name(), bitacora.getName(), bitacora.getDescription() });
             }
+            model.addRow(new Object[]{ "Agregar", "nuevo", "registro", "de", "bitácora..." });
         } else {
             model.addRow(new Object[]{ "Aún", "no", "hay", "bitácoras", "registradas..." });
         }
+    }
+
+    public void select_item () {
+        System.out.println(model.getValueAt(tblBitacora.getSelectedRow(), 0).toString().startsWith("Agregar"));
     }
 }
