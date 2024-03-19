@@ -33,12 +33,13 @@ public class Ticket {
         this.created_at = created_at;
     }
 
-    public Ticket(int id, String code, String name, String description, String state, String observations, String requester_area_name, String boss_name, String dev_boss_name, String tester_name, String programmer_name, String due_date, String created_at) {
+    public Ticket(int id, String code, String name, String description, String state, int state_id, String observations, String requester_area_name, String boss_name, String dev_boss_name, String tester_name, String programmer_name, String due_date, String created_at) {
         this.id = id;
         this.code = code;
         this.name = name;
         this.description = description;
         this.state = state;
+        this.state_id = state_id;
         this.observations = observations;
         this.requester_area_name = requester_area_name;
         this.boss_name = boss_name;

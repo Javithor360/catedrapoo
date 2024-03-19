@@ -17,7 +17,7 @@ public class Programador {
         Conexion conexion = null;
         try {
             conexion = new Conexion();
-            String ticketsQuery = "SELECT t.id AS ticket_id, t.code AS ticket_code, t.name AS ticket_name, t.description AS ticket_description, t.due_date AS ticket_due_date, t.created_at AS ticket_created_at, s.name AS state, u.name AS boss_name, u2.name AS dev_boss_name, u3.name AS programmer_name, u4.name AS tester_name, a.name AS area_name, o.description AS observations FROM tickets t LEFT JOIN users u ON t.boss_id = u.id LEFT JOIN users u2 ON t.dev_boss_id = u2.id LEFT JOIN users u3 ON t.programmer_id = u3.id LEFT JOIN users u4 ON t.tester_id = u4.id LEFT JOIN areas a ON t.boss_id = a.boss_id LEFT JOIN states s ON t.state_id = s.id LEFT JOIN observations o ON t.id = o.ticket_id AND t.dev_boss_id = o.writer_id WHERE t.programmer_id = " + programmer_id + " AND t.state_id != 1;";
+            String ticketsQuery = "SELECT t.id AS ticket_id, t.code AS ticket_code, t.name AS ticket_name, t.description AS ticket_description, t.state_id AS state_id, t.due_date AS ticket_due_date, t.created_at AS ticket_created_at, s.name AS state, u.name AS boss_name, u2.name AS dev_boss_name, u3.name AS programmer_name, u4.name AS tester_name, a.name AS area_name, o.description AS observations FROM tickets t LEFT JOIN users u ON t.boss_id = u.id LEFT JOIN users u2 ON t.dev_boss_id = u2.id LEFT JOIN users u3 ON t.programmer_id = u3.id LEFT JOIN users u4 ON t.tester_id = u4.id LEFT JOIN areas a ON t.boss_id = a.boss_id LEFT JOIN states s ON t.state_id = s.id LEFT JOIN observations o ON t.id = o.ticket_id AND t.dev_boss_id = o.writer_id WHERE t.programmer_id = " + programmer_id + " AND t.state_id != 1;";
             conexion.setRs(ticketsQuery);
 
             ResultSet rs = conexion.getRs();
@@ -29,6 +29,7 @@ public class Programador {
                         rs.getString("ticket_name"),
                         rs.getString("ticket_description"),
                         rs.getString("state"),
+                        rs.getInt("state_id"),
                         rs.getString("observations"),
                         rs.getString("area_name"),
                         rs.getString("boss_name"),

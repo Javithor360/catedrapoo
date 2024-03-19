@@ -51,6 +51,10 @@ public class ProgramadoresDetalle extends JFrame {
         txaDescripcion.setText(ticket.getDescription());
         txaObservaciones.setText(ticket.getObservations());
 
+        if(ticket.getState_id() != 3 && ticket.getState_id() != 6) {
+            btnEntregar.setEnabled(false);
+        }
+
         String[] columns = { "Fecha", "Progreso", "Autor", "Título", "Descripción" };
         model = new DefaultTableModel(null, columns) {
             @Override
@@ -87,16 +91,18 @@ public class ProgramadoresDetalle extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 try {
-                    if (submitTicket(ticket, user.getId())) {
-                        JOptionPane.showMessageDialog(
-                                pnlDetalle,
-                                "¡El caso ha sido entregado correctamente!",
-                                "ÉXITO",
-                                JOptionPane.INFORMATION_MESSAGE
-                        );
+                    if(btnEntregar.isEnabled()) {
+                        if (submitTicket(ticket, user.getId())) {
+                            JOptionPane.showMessageDialog(
+                                    pnlDetalle,
+                                    "¡El caso ha sido entregado correctamente!",
+                                    "ÉXITO",
+                                    JOptionPane.INFORMATION_MESSAGE
+                            );
 
-                        mainComponent.fetch_tickets(user.getId());
-                        dispose();
+                            mainComponent.fetch_tickets(user.getId());
+                            dispose();
+                        }
                     }
                 } catch (SQLException ex) {
                     JOptionPane.showMessageDialog(
@@ -138,7 +144,7 @@ public class ProgramadoresDetalle extends JFrame {
         } else {
             model.addRow(new Object[]{"Aún", "no", "hay", "bitácoras", "registradas..."});
         }
-        if(Objects.equals(t.getState(), "En desarrollo") || Objects.equals(t.getState(), "Devuelto con observaciones")) {
+        if(t.getState_id() == 3 || t.getState_id() == 6) {
             model.addRow(new Object[]{"Agregar", "nuevo", "registro", "de", "bitácora..."});
         }
     }
