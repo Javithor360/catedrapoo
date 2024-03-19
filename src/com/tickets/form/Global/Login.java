@@ -82,8 +82,8 @@ public class Login extends JFrame {
 
                     if (userInfo.getRole_id() == 1) {
                         new JefeDesarrolloMain(userInfo);
-//                    } else if (userInfo.getRole_id() == 2) {
-//                       new ProgramadoresMain(userInfo);
+                    } else if (userInfo.getRole_id() == 2) {
+                       new ProgramadoresMain(userInfo);
                     } else if (userInfo.getRole_id() == 3) {
                         new SolicitanteMain();
                     } else if (userInfo.getRole_id() == 4) {

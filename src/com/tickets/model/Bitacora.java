@@ -20,6 +20,15 @@ public class Bitacora {
         this.created_at = created_at;
     }
 
+    public Bitacora(String code, String name, String description, double percent, String programmer_name, String created_at) {
+        this.code = code;
+        this.name = name;
+        this.description = description;
+        this.percent = percent;
+        this.programmer_name = programmer_name;
+        this.created_at = created_at;
+    }
+
     public int getId() {
         return id;
     }

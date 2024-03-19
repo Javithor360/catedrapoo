@@ -3,14 +3,12 @@ package com.tickets.form.JefeDesarrollo;
 import com.tickets.model.JefeDesarrollo;
 import com.tickets.model.Ticket;
 import com.tickets.model.UserSession;
-import com.tickets.util.Conexion;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;

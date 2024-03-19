@@ -1,6 +1,7 @@
 package com.tickets.form.Programadores;
 
 import com.tickets.model.Bitacora;
+import com.tickets.model.Programador;
 import com.tickets.model.Ticket;
 import com.tickets.model.UserSession;
 
@@ -9,6 +10,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.List;
 
@@ -40,7 +42,6 @@ public class ProgramadoresDetalle extends JFrame {
         setContentPane(pnlDetalle);
 
         lblTitle.setText("Detalles del caso " + ticket.getCode());
-        txtProgreso.setText(ticket.getState() + " (" + get_latest_percent(ticket) + "%)");
         txtFechaCreacion.setText(ticket.getCreated_at());
         txtFechaEntrega.setText(ticket.getDue_date());
         txtSolicitante.setText(ticket.getBoss_name() + " (Depto. " + ticket.getRequester_area_name() + ")");
@@ -49,6 +50,10 @@ public class ProgramadoresDetalle extends JFrame {
         txtTitle.setText(ticket.getName());
         txaDescripcion.setText(ticket.getDescription());
         txaObservaciones.setText(ticket.getObservations());
+
+        if(ticket.getState_id() != 3 && ticket.getState_id() != 6) {
+            btnEntregar.setEnabled(false);
+        }
 
         String[] columns = { "Fecha", "Progreso", "Autor", "Título", "Descripción" };
         model = new DefaultTableModel(null, columns) {
@@ -73,7 +78,41 @@ public class ProgramadoresDetalle extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                select_item();
+
+                if(model.getValueAt(tblBitacora.getSelectedRow(), 0).toString().startsWith("Agregar")) {
+                    new ProgramadoresBitacora(user, ticket, ProgramadoresDetalle.this, mainComponent);
+                    fetch_logs(ticket);
+                }
+            }
+        });
+
+        btnEntregar.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                try {
+                    if(btnEntregar.isEnabled()) {
+                        if (submitTicket(ticket, user.getId())) {
+                            JOptionPane.showMessageDialog(
+                                    pnlDetalle,
+                                    "¡El caso ha sido entregado correctamente!",
+                                    "ÉXITO",
+                                    JOptionPane.INFORMATION_MESSAGE
+                            );
+
+                            mainComponent.fetch_tickets(user.getId());
+                            dispose();
+                        }
+                    }
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(
+                            pnlDetalle,
+                            "Ocurrió un error durante la ejecución:\n" + ex.getMessage(),
+                            "ERROR",
+                            JOptionPane.ERROR_MESSAGE
+                    );
+                    throw new RuntimeException(ex);
+                }
             }
         });
     }
@@ -92,21 +131,37 @@ public class ProgramadoresDetalle extends JFrame {
         }
     }
 
-    public void fetch_logs (Ticket t) {
+    public void fetch_logs(Ticket t) {
         model.setRowCount(0);
 
-        if(!t.getLogs().isEmpty()) {
+        txtProgreso.setText(t.getState() + " (" + get_latest_percent(t) + "%)");
+
+        if (!t.getLogs().isEmpty()) {
             for (Map.Entry<Integer, Bitacora> entry : t.getLogs().entrySet()) {
                 Bitacora bitacora = entry.getValue();
-                model.addRow(new Object[]{ bitacora.getCreated_at(), bitacora.getPercent(), bitacora.getProgrammer_name(), bitacora.getName(), bitacora.getDescription() });
+                model.addRow(new Object[]{bitacora.getCreated_at(), bitacora.getPercent(), bitacora.getProgrammer_name(), bitacora.getName(), bitacora.getDescription()});
             }
-            model.addRow(new Object[]{ "Agregar", "nuevo", "registro", "de", "bitácora..." });
         } else {
-            model.addRow(new Object[]{ "Aún", "no", "hay", "bitácoras", "registradas..." });
+            model.addRow(new Object[]{"Aún", "no", "hay", "bitácoras", "registradas..."});
+        }
+        if(t.getState_id() == 3 || t.getState_id() == 6) {
+            model.addRow(new Object[]{"Agregar", "nuevo", "registro", "de", "bitácora..."});
         }
     }
 
-    public void select_item () {
-        System.out.println(model.getValueAt(tblBitacora.getSelectedRow(), 0).toString().startsWith("Agregar"));
+    public boolean submitTicket (Ticket t, int programmer_id) throws SQLException {
+        if(!(get_latest_percent(t) < 100)) {
+            Programador.submitTicket(t.getId(), programmer_id);
+            return true;
+        } else {
+            JOptionPane.showMessageDialog(
+                    pnlDetalle,
+                    "Para poder entregar este caso necesitas registrar un 100% de avances en la bitácora.",
+                    "ERROR",
+                    JOptionPane.ERROR_MESSAGE
+            );
+            return false;
+        }
     }
+
 }
