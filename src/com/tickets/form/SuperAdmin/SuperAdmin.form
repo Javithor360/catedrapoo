@@ -7,7 +7,7 @@
     <properties/>
     <border type="none"/>
     <children>
-      <grid id="5e24a" binding="pnlAdmin" layout-manager="GridLayoutManager" row-count="7" column-count="6" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="5e24a" binding="pnlAdmin" layout-manager="GridLayoutManager" row-count="7" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints border-constraint="Center"/>
         <properties/>
@@ -15,7 +15,7 @@
         <children>
           <vspacer id="87527">
             <constraints>
-              <grid row="0" column="5" row-span="7" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="4" row-span="7" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
             </constraints>
           </vspacer>
           <vspacer id="84791">
@@ -25,40 +25,31 @@
           </vspacer>
           <hspacer id="3970b">
             <constraints>
-              <grid row="0" column="1" row-span="1" col-span="4" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="1" row-span="1" col-span="2" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
           </hspacer>
-          <component id="72733" class="javax.swing.JLabel" binding="lblTitulo">
-            <constraints>
-              <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <font name="JetBrains Mono" size="26" style="1"/>
-              <text value="Bienvenido Admin!"/>
-            </properties>
-          </component>
           <component id="eadae" class="javax.swing.JButton" binding="btnArea">
             <constraints>
-              <grid row="2" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text value="Gestionar Áreas Funcionales"/>
             </properties>
           </component>
-          <component id="e0cf8" class="javax.swing.JButton" binding="btnJefeArea">
+          <component id="e0cf8" class="javax.swing.JButton" binding="btnGrupo">
             <constraints>
-              <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Gestionar Jefes de Áreas"/>
+              <text value="Distribución de Grupos"/>
             </properties>
           </component>
-          <component id="b4055" class="javax.swing.JButton" binding="btnJefeDesa">
+          <component id="53a4f" class="javax.swing.JButton" binding="btnNuevo">
             <constraints>
-              <grid row="4" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Gestionar Jefes Desarrollo"/>
+              <text value="Nuevo Empelado"/>
             </properties>
           </component>
           <component id="9fbc0" class="javax.swing.JButton" binding="btnSalir">
@@ -69,14 +60,25 @@
               <text value="Salir"/>
             </properties>
           </component>
-          <component id="53a4f" class="javax.swing.JButton" binding="btnNuevo">
+          <component id="72733" class="javax.swing.JLabel" binding="lblTitulo">
             <constraints>
-              <grid row="6" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Nuevo Empelado"/>
+              <font name="JetBrains Mono" size="26" style="1"/>
+              <text value="¡Bienvenido Admin!"/>
             </properties>
           </component>
+          <hspacer id="90518">
+            <constraints>
+              <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+          </hspacer>
+          <hspacer id="ca2b">
+            <constraints>
+              <grid row="6" column="3" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+          </hspacer>
         </children>
       </grid>
     </children>

@@ -208,14 +208,15 @@ public class JefeDesarrollo extends UserSession {
         JefeDesarrollo.all_tickets = all_tickets;
     }
 
-    public static void fetchAvailableBosses() throws SQLException {
+    public static void fetchAvailableDevBosses() throws SQLException {
         HashMap<Integer, JefeDesarrollo> availableDevBossList = new HashMap<>();
 
         Conexion conexion = new Conexion();
 
         //  Jefes de área que no están previamente asignados a alguna área
-        String query = "SELECT u.id AS ID, u.name AS Nombre, u.email AS Email FROM users u LEFT JOIN areas a ON u.id = a.boss_id " +
-                "WHERE u.role_id = (SELECT id FROM roles WHERE name = 'Jefe de Área Funcional') " +
+        String query = "SELECT u.id AS ID, u.name AS Nombre, u.email AS Email FROM users u " +
+                "LEFT JOIN assignments_map a ON u.id = a.boss_id " +
+                "WHERE u.role_id = (SELECT id FROM roles WHERE name = 'Jefe de Desarrollo') " +
                 "AND a.id IS NULL";
 
         conexion.setRs(query);

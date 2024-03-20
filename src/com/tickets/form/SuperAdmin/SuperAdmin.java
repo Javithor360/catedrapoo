@@ -2,6 +2,7 @@ package com.tickets.form.SuperAdmin;
 
 import com.tickets.form.Global.Login;
 import com.tickets.form.SuperAdmin.AreaFuncional.AreaFuncionalMain;
+import com.tickets.form.SuperAdmin.Grupos.GruposMain;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,8 +15,7 @@ public class SuperAdmin extends JFrame{
     private JButton btnNuevo;
     private JButton btnSalir;
     private JButton btnArea;
-    private JButton btnJefeArea;
-    private JButton btnJefeDesa;
+    private JButton btnGrupo;
     private JLabel lblTitulo;
 
     public SuperAdmin(){
@@ -31,7 +31,6 @@ public class SuperAdmin extends JFrame{
                 btnSalir();
             }
         });
-
         btnNuevo.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -40,7 +39,6 @@ public class SuperAdmin extends JFrame{
                 frame.setVisible(true);
             }
         });
-
         btnArea.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -48,6 +46,19 @@ public class SuperAdmin extends JFrame{
                 JFrame frame = null;
                 try {
                     frame = new AreaFuncionalMain();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+                frame.setVisible(true);
+            }
+        });
+        btnGrupo.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+                JFrame frame = null;
+                try {
+                    frame = new GruposMain();
                 } catch (SQLException ex) {
                     throw new RuntimeException(ex);
                 }

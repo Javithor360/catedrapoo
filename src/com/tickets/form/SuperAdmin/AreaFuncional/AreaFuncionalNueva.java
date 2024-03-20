@@ -3,6 +3,7 @@ package com.tickets.form.SuperAdmin.AreaFuncional;
 import com.tickets.form.SuperAdmin.SuperAdmin;
 import com.tickets.model.Area;
 import com.tickets.model.JefeArea;
+import com.tickets.model.JefeDesarrollo;
 
 import javax.swing.*;
 import java.awt.*;
@@ -33,10 +34,7 @@ public class AreaFuncionalNueva extends JFrame {
     private JLabel lblGroup;
 
     private HashMap<Integer, JefeArea> bosses_list;
-
-
-
-    private HashMap<Integer, JefeArea> bosses_dev_list;
+    private HashMap<Integer, JefeDesarrollo> dev_bosses_list;
 
     public AreaFuncionalNueva() throws SQLException {
         super("Áreas Funcionales - Agregar");
@@ -46,12 +44,14 @@ public class AreaFuncionalNueva extends JFrame {
         setLocationRelativeTo(getParent());
         setContentPane(pnlAreaNew);
 
-        // Llenando ComboBox con opciones de jefes de area disponibles
-        llenarCMBJefesArea();
+        // Llenar ComboBox con opciones de jefes de area disponibles
+        boolean flag1 = llenarCMBJefesArea();
 
-        // Llenando ComboBox con opciones de jefes de area desarrollo
-        llenarCMBJefesDesarrollo();
+        // Llenar ComboBox con opciones de jefes de area desarrollo
+        boolean flag2 = llenarCMBJefesDesarrollo();
 
+        // Habilitar btnGuardar
+        btnGuardar.setEnabled(flag1 && flag2);
 
         btnVolver.addActionListener(new ActionListener() {
             @Override
@@ -65,13 +65,17 @@ public class AreaFuncionalNueva extends JFrame {
         });
     }
 
+    // ===============================================================
+
     public void get_disp_bosses() throws SQLException {
         JefeArea.fetchAvailableBosses();
         bosses_list = JefeArea.getAvailables_bosses();
     }
 
     // LLenar el JComboBox con los jefes de área disponibles
-    private void llenarCMBJefesArea() throws SQLException {
+    private boolean llenarCMBJefesArea() throws SQLException {
+        boolean hayJefes = false;
+
         // Obtener los jefes de área disponibles desde la base de datos
         get_disp_bosses();
 
@@ -84,24 +88,49 @@ public class AreaFuncionalNueva extends JFrame {
             // Asignar los valores al JComboBox
             cmbBoss.setModel(new DefaultComboBoxModel<>(bossArray));
             cmbBoss.setEnabled(true); // Habilitar el JComboBox
-            btnGuardar.setEnabled(true); // Habilitar el botón de guardar
+            hayJefes = true;
         } else {
             // Deshabilitar opciones de guardado
             cmbBoss.setModel(new DefaultComboBoxModel<>(new String[] {"Sin jefes de área disponibles"}));
             cmbBoss.setEnabled(false); // Deshabilitar el JComboBox
-            btnGuardar.setEnabled(false); // Deshabilitar el botón de guardar
+            hayJefes = false;
         }
+
+        return hayJefes;
     }
 
     // ===============================================================
 
-    public HashMap<Integer, JefeArea> getBosses_dev_list() {
-        return bosses_dev_list;
+    public void get_disp_dev_bosses() throws SQLException {
+        JefeDesarrollo.fetchAvailableDevBosses();
+        dev_bosses_list = JefeDesarrollo.getAvailables_dev_bosses();
     }
 
     // LLenar el JComboBox con los jefes de Desarollo disponibles
-    private void llenarCMBJefesDesarrollo() throws SQLException {
+    private boolean llenarCMBJefesDesarrollo() throws SQLException {
+        boolean hayJefesDesarollo = false;
+        // Obtener los jefes de desarrollo desde la base de datos
+        get_disp_dev_bosses();
 
+        if(!dev_bosses_list.isEmpty()) {
+            Collection<String> values = dev_bosses_list.values().stream()
+                    .map(JefeDesarrollo::getName)
+                    .collect(Collectors.toList()); // Obtener los nombres de los jefes de área disponibles
+            String[] bossArray = values.toArray(new String[0]); // Convertir la lista de nombres a un arreglo
+
+            // Asignar los valores al JComboBox
+            cmbDevBoss.setModel(new DefaultComboBoxModel<>(bossArray));
+            cmbDevBoss.setEnabled(true); // Habilitar el JComboBox
+
+            hayJefesDesarollo = true;
+        } else {
+            // Deshabilitar opciones de guardado
+            cmbDevBoss.setModel(new DefaultComboBoxModel<>(new String[] {"Sin jefes de desarollo disponibles"}));
+            cmbDevBoss.setEnabled(false); // Deshabilitar el JComboBox
+            hayJefesDesarollo = false;
+        }
+
+        return hayJefesDesarollo;
     }
 
     private void btnVolver() throws SQLException {
