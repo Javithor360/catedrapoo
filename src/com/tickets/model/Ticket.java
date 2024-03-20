@@ -1,6 +1,13 @@
 package com.tickets.model;
 
+import com.tickets.util.Conexion;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Ticket {
     private int id;
@@ -50,12 +57,28 @@ public class Ticket {
         this.created_at = created_at;
     }
 
+    public Ticket(int id, int state_id, String due_date, String created_at) {
+        this.id = id;
+        this.state_id = state_id;
+        this.due_date = due_date;
+        this.created_at = created_at;
+    }
+
     public void addBitacora (Bitacora bitacora) {
         if(logs == null) {
             logs = new HashMap<>();
         }
 
         logs.put(bitacora.getId(), bitacora);
+    }
+
+    // Método para verificar si la fecha de entrega ha excedido la fecha actual
+    public boolean checkDueDate() {
+        LocalDate dueDate = LocalDate.parse(this.due_date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        LocalDate currentDate = LocalDate.now();
+
+        // Comparar la fecha de entrega con la fecha actual
+        return dueDate.isBefore(currentDate);
     }
 
     public int getId() {

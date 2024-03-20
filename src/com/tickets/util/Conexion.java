@@ -53,7 +53,6 @@ public class Conexion {
             System.out.println("[ERROR] Fallo en SQL query: \n" + e.getMessage());
             throw e; // Relanza la excepción para manejarla fuera de la clase Conexion
         }
-        System.out.println(pstmt);
         return pstmt;
     }
 
