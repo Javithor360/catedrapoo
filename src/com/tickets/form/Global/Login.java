@@ -87,7 +87,7 @@ public class Login extends JFrame {
                     } else if (userInfo.getRole_id() == 3) {
                         new SolicitanteMain();
                     } else if (userInfo.getRole_id() == 4) {
-                        new ProbadoresMain();
+                        new ProbadoresMain(userInfo);
                     }
                 }
                 conexion.closeConnection();
