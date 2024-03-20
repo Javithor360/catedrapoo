@@ -1,5 +1,6 @@
 package com.tickets.form.SuperAdmin.AreaFuncional;
 
+import com.tickets.form.SuperAdmin.NuevoEmpleado;
 import com.tickets.model.*;
 
 import javax.swing.*;
@@ -31,6 +32,8 @@ public class AreaFuncionalNueva extends JFrame {
     private JLabel lblNumGrupo;
     private JLabel lblNumGrupoProgra;
     private JLabel lblGrupoProgramadores;
+    private int NumGrupoEmpleado;
+    private int NumGrupoProgramadores;
 
     private HashMap<Integer, JefeArea> bosses_list;
     private HashMap<Integer, JefeDesarrollo> dev_bosses_list;
@@ -67,7 +70,11 @@ public class AreaFuncionalNueva extends JFrame {
         btnGuardar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                validaryGuardar();
+                try {
+                    validaryGuardar();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         });
     }
@@ -78,10 +85,12 @@ public class AreaFuncionalNueva extends JFrame {
         HashMap<Integer, Grupo> gruposExistentes = Grupo.getAll_grupos();
         // Obtener el número de grupos ya existentes
         int size = gruposExistentes.size();
+        // Predefinir sus próximos números de grupo
+        setNumGrupoEmpleado(size + 1);
+        setNumGrupoProgramadores(size + 2);
 
-        // Predecimos su futuro número de grupo
-        lblNumGrupo.setText(String.valueOf(size + 1));
-        lblNumGrupoProgra.setText(String.valueOf(size + 2));
+        lblNumGrupo.setText(String.valueOf(getNumGrupoEmpleado()));
+        lblNumGrupoProgra.setText(String.valueOf(getNumGrupoProgramadores()));
     }
 
     public void validarPrefix() {
@@ -93,34 +102,6 @@ public class AreaFuncionalNueva extends JFrame {
                     JOptionPane.ERROR_MESSAGE);
             txtPrefix.setText("");
         }
-    }
-
-    public void validaryGuardar() {
-        if (txtNombre.getText().isEmpty() ||
-                txtPrefix.getText().isEmpty() ||
-                cmbBoss.getSelectedIndex() == -1 ||
-                cmbDevBoss.getSelectedIndex() == -1) {
-            JOptionPane.showMessageDialog(this, "Por favor, complete todos los campos.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        validarPrefix();
-
-        String name = txtNombre.getText();
-        String prefijo = txtPrefix.getText();
-        int id_boss =  extraerJefe(cmbBoss.getSelectedItem().toString());
-        int id_dev_boss =  extraerJefe(cmbDevBoss.getSelectedItem().toString());
-
-        // Crear nueva Area
-        Area nuevaArea = new Area(name,prefijo,id_boss,id_dev_boss);
-        nuevaArea.insert(nuevaArea);
-
-        // Crear sus Respectivos Grupos
-        Grupo grupoEmpleados = new Grupo("Programadores para" + prefijo);
-        grupoEmpleados.insert(grupoEmpleados);
-        Grupo grupoProgramadores = new Grupo("Empleados " + name);
-        grupoProgramadores.insert(grupoProgramadores);
-        JOptionPane.showMessageDialog(null, grupoProgramadores.getNombre());
     }
 
     public int extraerJefe(String cmbSeleccionado) {
@@ -136,7 +117,6 @@ public class AreaFuncionalNueva extends JFrame {
     }
 
     // ===============================================================
-
     public void get_disp_bosses() throws SQLException {
         JefeArea.fetchAvailableBosses();
         bosses_list = JefeArea.getAvailables_bosses();
@@ -170,7 +150,6 @@ public class AreaFuncionalNueva extends JFrame {
     }
 
     // ===============================================================
-
     public void get_disp_dev_bosses() throws SQLException {
         JefeDesarrollo.fetchAvailableDevBosses();
         dev_bosses_list = JefeDesarrollo.getAvailables_dev_bosses();
@@ -203,6 +182,66 @@ public class AreaFuncionalNueva extends JFrame {
         return hayJefesDesarollo;
     }
 
+    // ===============================================================
+
+    public int getNumGrupoEmpleado() {
+        return NumGrupoEmpleado;
+    }
+
+    public void setNumGrupoEmpleado(int numGrupoEmpleado) {
+        NumGrupoEmpleado = numGrupoEmpleado;
+    }
+
+    public int getNumGrupoProgramadores() {
+        return NumGrupoProgramadores;
+    }
+
+    public void setNumGrupoProgramadores(int numGrupoProgramadores) {
+        NumGrupoProgramadores = numGrupoProgramadores;
+    }
+
+    // Acciones =======================================================
+    public void validaryGuardar() throws SQLException {
+        if (txtNombre.getText().isEmpty() ||
+                txtPrefix.getText().isEmpty() ||
+                cmbBoss.getSelectedIndex() == -1 ||
+                cmbDevBoss.getSelectedIndex() == -1) {
+            JOptionPane.showMessageDialog(this, "Por favor, complete todos los campos.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        validarPrefix();
+
+        String name = txtNombre.getText();
+        String prefijo = txtPrefix.getText();
+        int id_boss =  extraerJefe(cmbBoss.getSelectedItem().toString());
+        int id_dev_boss =  extraerJefe(cmbDevBoss.getSelectedItem().toString());
+        int NuevaAreaID = -1; // Valor por defecto en caso de error
+
+        // Crear nueva Area ======================================================
+        Area nuevaArea = new Area(name,prefijo,id_boss,id_dev_boss); // Instancia
+        NuevaAreaID = nuevaArea.insert(nuevaArea); // Guardar en la BD
+
+        // Crear sus Respectivos Grupos ==========================================
+        Grupo grupoEmpleados = new Grupo("Empleados " + prefijo);
+        grupoEmpleados.insert(grupoEmpleados);
+        Grupo grupoProgramadores = new Grupo("Programadores para " + name);
+        grupoProgramadores.insert(grupoProgramadores);
+
+        // Asignar los Jefes a los respectivos Grupos ============================
+        MapeoAsignacion JefeGrupoEmpleado = new MapeoAsignacion(id_boss, NuevaAreaID, getNumGrupoEmpleado());
+        JefeGrupoEmpleado.insert(JefeGrupoEmpleado);
+        MapeoAsignacion JefeGrupoDesarrollo = new MapeoAsignacion(id_dev_boss, NuevaAreaID, getNumGrupoProgramadores());
+        JefeGrupoDesarrollo.insert(JefeGrupoDesarrollo);
+
+        // Reiniciar FORM
+        reiniciarForm();
+    }
+    private void reiniciarForm() throws SQLException {
+        dispose();
+        JFrame frame = new AreaFuncionalNueva();
+        frame.setVisible(true);
+    }
     private void btnVolver() throws SQLException {
         dispose();
         JFrame frame = new AreaFuncionalMain();

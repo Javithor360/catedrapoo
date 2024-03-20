@@ -3,10 +3,7 @@ package com.tickets.model;
 import com.tickets.util.Conexion;
 
 import javax.swing.*;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.HashMap;
 
 public class Area {
@@ -39,7 +36,6 @@ public class Area {
     }
 
     // Getters ====================================
-
     public int getId() {
         return id;
     }
@@ -61,13 +57,11 @@ public class Area {
     public int getId_dev_boss() {
         return id_dev_boss;
     }
-
     public Timestamp getCreated_at() {
         return created_at;
     }
 
     // Métodos ===================================
-
     public static void fetchAllAreas() throws SQLException {
         HashMap<Integer, Area> areaList = new HashMap<>();
 
@@ -101,18 +95,19 @@ public class Area {
     }
 
     // BDD ===================================
-
     private final String insert =
             "INSERT INTO areas (prefix_code, name, boss_id, dev_boss_id, created_at) VALUES (?, ?, ?, ?, ?)";
 
+    public int insert(Area area) {
+        // Valor por defecto en caso de error
+        int nuevoId = -1;
 
-    public String insert(Area area) {
         String mensaje = "";
 
             try{
                 Conexion conexion = new Conexion();
 
-                PreparedStatement pstmt = conexion.setQuery(insert);
+                PreparedStatement pstmt = conexion.setQuery(insert, Statement.RETURN_GENERATED_KEYS );
 
                 pstmt.setString(1, area.getPrefix_code());
                 pstmt.setString(2, area.getName());
@@ -123,6 +118,10 @@ public class Area {
                 int rows = pstmt.executeUpdate();
 
                 if (rows > 0) {
+                    ResultSet nuevoID = pstmt.getGeneratedKeys();
+                    if (nuevoID.next()) {
+                        nuevoId = nuevoID.getInt(1); // Obtener el nuevo ID asignado por la base de datos
+                    }
                     mensaje = "Registro insertado correctamente.";
                 } else {
                     mensaje = "Error al insertar el registro";
@@ -137,7 +136,7 @@ public class Area {
                 System.exit(0);
             }
 
-        return mensaje;
+        return nuevoId;
     }
 
 }

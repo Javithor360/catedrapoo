@@ -60,4 +60,20 @@ public class Conexion {
     public void closeConnection() throws SQLException {
         connection.close();
     }
+
+    /*
+        Método que recibe un SQL como parámetro
+        que sea UPDATE, INSERT o DELETE
+        Y RETORNA EL ID GENERADO
+    */
+    public PreparedStatement setQuery(String sql, int returnGeneratedKeys)  throws SQLException {
+        PreparedStatement pstmt = null;
+        try {
+            pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        } catch (SQLException e) {
+            System.out.println("[ERROR] Fallo en SQL query: \n" + e.getMessage());
+            throw e; // Relanza la excepción para manejarla fuera de la clase Conexion
+        }
+        return pstmt;
+    }
 }
