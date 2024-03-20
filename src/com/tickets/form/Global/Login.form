@@ -46,7 +46,7 @@
           </grid>
         </constraints>
         <properties>
-          <text value="1234"/>
+          <text value=""/>
         </properties>
       </component>
       <component id="c09ca" class="javax.swing.JTextField" binding="txtUsuario">
@@ -56,7 +56,7 @@
           </grid>
         </constraints>
         <properties>
-          <text value="helena.valladares@correo.com"/>
+          <text value=""/>
         </properties>
       </component>
       <component id="67215" class="javax.swing.JButton" binding="btnIngresar">
