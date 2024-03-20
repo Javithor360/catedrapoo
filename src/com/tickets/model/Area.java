@@ -2,8 +2,11 @@ package com.tickets.model;
 
 import com.tickets.util.Conexion;
 
+import javax.swing.*;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.HashMap;
 
 public class Area {
@@ -12,18 +15,27 @@ public class Area {
     private int id;
     private String prefix_code;
     private String name;
+    private int id_boss;
     private String boss_name;
+    private int id_dev_boss;
     private String dev_boss_name;
-    private String created_at;
+    private Timestamp created_at;
     private static HashMap<Integer, Area> all_areas;
 
-    public Area(int id, String prefix_code, String name, String boss_name, String dev_boss_name, String created_at) {
+    public Area(int id, String prefix_code, String name, String boss_name, String dev_boss_name, Timestamp created_at) {
         this.id = id;
         this.prefix_code = prefix_code;
         this.name = name;
         this.boss_name = boss_name;
         this.dev_boss_name = dev_boss_name;
         this.created_at = created_at;
+    }
+
+    public Area(String name, String prefix_code, int id_boss, int id_dev_boss) {
+        this.name = name;
+        this.prefix_code = prefix_code;
+        this.id_boss = id_boss;
+        this.id_dev_boss = id_dev_boss;
     }
 
     // Getters ====================================
@@ -43,7 +55,14 @@ public class Area {
     public String getDev_boss_name() {
         return dev_boss_name;
     }
-    public String getCreated_at() {
+    public int getId_boss() {
+        return id_boss;
+    }
+    public int getId_dev_boss() {
+        return id_dev_boss;
+    }
+
+    public Timestamp getCreated_at() {
         return created_at;
     }
 
@@ -65,7 +84,7 @@ public class Area {
                     rs.getString("Nombre"),
                     rs.getString("Jefe_Area"),
                     rs.getString("Jefe_Dev_Area"),
-                    rs.getString("Creado")
+                    rs.getTimestamp("Creado")
             );
 
             areaList.put(area.getId(), area);
@@ -80,4 +99,45 @@ public class Area {
     public static HashMap<Integer, Area> getAll_areas() {
         return all_areas;
     }
+
+    // BDD ===================================
+
+    private final String insert =
+            "INSERT INTO areas (prefix_code, name, boss_id, dev_boss_id, created_at) VALUES (?, ?, ?, ?, ?)";
+
+
+    public String insert(Area area) {
+        String mensaje = "";
+
+            try{
+                Conexion conexion = new Conexion();
+
+                PreparedStatement pstmt = conexion.setQuery(insert);
+
+                pstmt.setString(1, area.getPrefix_code());
+                pstmt.setString(2, area.getName());
+                pstmt.setString(3, String.valueOf(area.getId_boss()));
+                pstmt.setString(4, String.valueOf(area.getId_dev_boss()));
+                pstmt.setTimestamp(5, new Timestamp(System.currentTimeMillis()));
+
+                int rows = pstmt.executeUpdate();
+
+                if (rows > 0) {
+                    mensaje = "Registro insertado correctamente.";
+                } else {
+                    mensaje = "Error al insertar el registro";
+                }
+
+                JOptionPane.showMessageDialog(null, mensaje);
+
+                conexion.closeConnection();
+
+            } catch (SQLException e) {
+                System.out.println("ERROR:Fallo en SQL INSERT: "+ e.getMessage());
+                System.exit(0);
+            }
+
+        return mensaje;
+    }
+
 }

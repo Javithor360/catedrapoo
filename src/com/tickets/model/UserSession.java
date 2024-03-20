@@ -29,6 +29,10 @@ public class UserSession {
         return name;
     }
 
+    public String getItem() {
+        return id + "." + name;
+    }
+
     public String getEmail() {
         return email;
     }

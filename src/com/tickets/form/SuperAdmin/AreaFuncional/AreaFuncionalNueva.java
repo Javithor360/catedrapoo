@@ -1,19 +1,16 @@
 package com.tickets.form.SuperAdmin.AreaFuncional;
 
-import com.tickets.form.SuperAdmin.SuperAdmin;
-import com.tickets.model.Area;
-import com.tickets.model.JefeArea;
-import com.tickets.model.JefeDesarrollo;
+import com.tickets.model.*;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.stream.Collectors;
 import java.util.HashMap;
-import java.util.Map;
 
 public class AreaFuncionalNueva extends JFrame {
     private JPanel pblNuevoEmpleado;
@@ -22,7 +19,7 @@ public class AreaFuncionalNueva extends JFrame {
     private JLabel lblNombre;
     private JLabel lblEmail;
     private JLabel lblPass;
-    private JLabel lblGenero;
+    private JLabel lblGrupos;
     private JTextField txtPrefix;
     private JTextField txtNombre;
     private JButton btnGuardar;
@@ -31,7 +28,9 @@ public class AreaFuncionalNueva extends JFrame {
     private JButton btnLimpiar;
     private JComboBox cmbDevBoss;
     private JComboBox cmbBoss;
-    private JLabel lblGroup;
+    private JLabel lblNumGrupo;
+    private JLabel lblNumGrupoProgra;
+    private JLabel lblGrupoProgramadores;
 
     private HashMap<Integer, JefeArea> bosses_list;
     private HashMap<Integer, JefeDesarrollo> dev_bosses_list;
@@ -43,6 +42,8 @@ public class AreaFuncionalNueva extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(getParent());
         setContentPane(pnlAreaNew);
+
+        fillGrupos();
 
         // Llenar ComboBox con opciones de jefes de area disponibles
         boolean flag1 = llenarCMBJefesArea();
@@ -63,6 +64,75 @@ public class AreaFuncionalNueva extends JFrame {
                 }
             }
         });
+        btnGuardar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                validaryGuardar();
+            }
+        });
+    }
+
+    public void fillGrupos() throws SQLException {
+        Grupo.fetchAllGroups();
+
+        HashMap<Integer, Grupo> gruposExistentes = Grupo.getAll_grupos();
+        // Obtener el número de grupos ya existentes
+        int size = gruposExistentes.size();
+
+        // Predecimos su futuro número de grupo
+        lblNumGrupo.setText(String.valueOf(size + 1));
+        lblNumGrupoProgra.setText(String.valueOf(size + 2));
+    }
+
+    public void validarPrefix() {
+        String prefijo = txtPrefix.getText();
+        if (prefijo.length() != 3) {
+            JOptionPane.showMessageDialog(null,
+                    "El prefijo debe tener una extensión de 3 dígitos",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            txtPrefix.setText("");
+        }
+    }
+
+    public void validaryGuardar() {
+        if (txtNombre.getText().isEmpty() ||
+                txtPrefix.getText().isEmpty() ||
+                cmbBoss.getSelectedIndex() == -1 ||
+                cmbDevBoss.getSelectedIndex() == -1) {
+            JOptionPane.showMessageDialog(this, "Por favor, complete todos los campos.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        validarPrefix();
+
+        String name = txtNombre.getText();
+        String prefijo = txtPrefix.getText();
+        int id_boss =  extraerJefe(cmbBoss.getSelectedItem().toString());
+        int id_dev_boss =  extraerJefe(cmbDevBoss.getSelectedItem().toString());
+
+        // Crear nueva Area
+        Area nuevaArea = new Area(name,prefijo,id_boss,id_dev_boss);
+        nuevaArea.insert(nuevaArea);
+
+        // Crear sus Respectivos Grupos
+        Grupo grupoEmpleados = new Grupo("Programadores para" + prefijo);
+        grupoEmpleados.insert(grupoEmpleados);
+        Grupo grupoProgramadores = new Grupo("Empleados " + name);
+        grupoProgramadores.insert(grupoProgramadores);
+        JOptionPane.showMessageDialog(null, grupoProgramadores.getNombre());
+    }
+
+    public int extraerJefe(String cmbSeleccionado) {
+        // Encontrar la posición del primer punto
+        int dotIndex = cmbSeleccionado.indexOf('.');
+        // Extraer los caracteres hasta el primer punto
+        String idExtraido = cmbSeleccionado.substring(0, dotIndex);
+
+        // Convertir la cadena extraída a entero (si es necesario)
+        int id = Integer.parseInt(idExtraido);
+
+        return id;
     }
 
     // ===============================================================
@@ -81,7 +151,7 @@ public class AreaFuncionalNueva extends JFrame {
 
         if (!bosses_list.isEmpty()) {
             Collection<String> values = bosses_list.values().stream()
-                    .map(JefeArea::getName)
+                    .map(JefeArea::getItem)
                     .collect(Collectors.toList()); // Obtener los nombres de los jefes de área disponibles
             String[] bossArray = values.toArray(new String[0]); // Convertir la lista de nombres a un arreglo
 
@@ -91,7 +161,7 @@ public class AreaFuncionalNueva extends JFrame {
             hayJefes = true;
         } else {
             // Deshabilitar opciones de guardado
-            cmbBoss.setModel(new DefaultComboBoxModel<>(new String[] {"Sin jefes de área disponibles"}));
+            cmbBoss.setModel(new DefaultComboBoxModel<>(new String[]{"Sin jefes de área disponibles"}));
             cmbBoss.setEnabled(false); // Deshabilitar el JComboBox
             hayJefes = false;
         }
@@ -112,9 +182,9 @@ public class AreaFuncionalNueva extends JFrame {
         // Obtener los jefes de desarrollo desde la base de datos
         get_disp_dev_bosses();
 
-        if(!dev_bosses_list.isEmpty()) {
+        if (!dev_bosses_list.isEmpty()) {
             Collection<String> values = dev_bosses_list.values().stream()
-                    .map(JefeDesarrollo::getName)
+                    .map(JefeDesarrollo::getItem)
                     .collect(Collectors.toList()); // Obtener los nombres de los jefes de área disponibles
             String[] bossArray = values.toArray(new String[0]); // Convertir la lista de nombres a un arreglo
 
@@ -125,7 +195,7 @@ public class AreaFuncionalNueva extends JFrame {
             hayJefesDesarollo = true;
         } else {
             // Deshabilitar opciones de guardado
-            cmbDevBoss.setModel(new DefaultComboBoxModel<>(new String[] {"Sin jefes de desarollo disponibles"}));
+            cmbDevBoss.setModel(new DefaultComboBoxModel<>(new String[]{"Sin jefes de desarollo disponibles"}));
             cmbDevBoss.setEnabled(false); // Deshabilitar el JComboBox
             hayJefesDesarollo = false;
         }
