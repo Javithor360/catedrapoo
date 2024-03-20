@@ -2,6 +2,8 @@ package com.tickets.model;
 
 import com.tickets.util.Conexion;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -55,7 +57,6 @@ public class Probador {
                     );
                     ticketLogs.put(logs.getId(), logs);
                 }
-                // rs2.close(); // Cerrar el ResultSet de la consulta de registros de bitácora
                 ticket.setLogs(ticketLogs);
                 ticketList.put(ticket.getCode(), ticket);
             }
@@ -75,4 +76,19 @@ public class Probador {
     public static void setAssigned_tester_tickets(HashMap<String, Ticket> assigned_tester_tickets) {
         Probador.assigned_tester_tickets = assigned_tester_tickets;
     }
+
+    // Método para actualizar el estado de un ticket
+    public static void updateStateTicket(int newState, int ticketId, int testerId) throws SQLException{
+        Conexion conexion = new Conexion();
+        PreparedStatement stmt;
+
+        String queryUpdate = "UPDATE tickets SET state_id = "+ newState +" WHERE id = " + ticketId + " AND tester_id = " + testerId + ";";
+
+        stmt = conexion.setQuery(queryUpdate);
+        stmt.executeUpdate();
+        stmt.close();
+
+        conexion.closeConnection();
+    }
+
 }

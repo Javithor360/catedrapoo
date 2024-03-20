@@ -94,8 +94,7 @@ public class ProbadoresMain extends JFrame {
         public void select_item (UserSession user) throws SQLException {
             Ticket selectedTicket = ticket_list.get(model.getValueAt(tblCheckCases.getSelectedRow(), 0).toString());
             if (selectedTicket != null) {
-                System.out.println(selectedTicket.getCode());
-                //new ProgramadoresDetalle(user, selectedTicket, ProbadoresMain.this);
+                new ProbadoresDetalle(user, selectedTicket, ProbadoresMain.this);
             } else {
                 JOptionPane.showMessageDialog(
                         pnlProbadores,
