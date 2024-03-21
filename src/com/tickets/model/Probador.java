@@ -95,7 +95,7 @@ public class Probador {
         Conexion conexion = new Conexion();
         PreparedStatement stmt;
 
-        String queryUpdate = "UPDATE tickets SET due_date = "+ newDate +" WHERE id = " + ticketId + ";";
+        String queryUpdate = "UPDATE tickets SET due_date = \""+ newDate +"\" WHERE id = " + ticketId + ";";
 
         stmt = conexion.setQuery(queryUpdate);
         stmt.executeUpdate();
