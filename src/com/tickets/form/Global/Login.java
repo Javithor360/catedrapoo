@@ -6,7 +6,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
 import java.sql.SQLException;
-import com.tickets.form.JefeArea.SolicitanteMain;
+
+import com.tickets.form.JefeArea.JefeAreaMain;
 import com.tickets.form.JefeDesarrollo.JefeDesarrolloMain;
 import com.tickets.form.Probadores.ProbadoresMain;
 import com.tickets.form.Programadores.ProgramadoresMain;
@@ -85,7 +86,7 @@ public class Login extends JFrame {
                     } else if (userInfo.getRole_id() == 2) {
                        new ProgramadoresMain(userInfo);
                     } else if (userInfo.getRole_id() == 3) {
-                        new SolicitanteMain();
+                        new JefeAreaMain(userInfo);
                     } else if (userInfo.getRole_id() == 4) {
                         new ProbadoresMain(userInfo);
                     }

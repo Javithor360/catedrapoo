@@ -144,7 +144,7 @@ public class ProbadoresDetalle extends JFrame {
     }
 
     public void errorMessage(Ticket ticket){
-        String message = (ticket.getState_id() != 7) ? "El desarrollo de este proyecto sigue en proceso. \n Echa un vistazo a la bitácora para conocer más detalles." : "El desarrollo de este proyecto ya ha finalizado." ;
+        String message = (ticket.getState_id() != 7 || ticket.getState_id() != 5) ? "El desarrollo de este proyecto sigue en proceso. \n Echa un vistazo a la bitácora para conocer más detalles." : "El desarrollo de este proyecto ya ha finalizado." ;
         JOptionPane.showMessageDialog(pnlDetalleCaso,
             message,
             "ERROR", JOptionPane.ERROR_MESSAGE); }

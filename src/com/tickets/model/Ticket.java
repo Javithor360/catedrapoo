@@ -1,13 +1,17 @@
 package com.tickets.model;
 
+import com.tickets.form.SuperAdmin.Clases.User;
 import com.tickets.util.Conexion;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.Year;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 public class Ticket {
     private int id;
@@ -70,6 +74,45 @@ public class Ticket {
         }
 
         logs.put(bitacora.getId(), bitacora);
+    }
+
+    public static void createTicket(UserSession boss, String name, String description) throws SQLException{
+        int devBossId=0;
+        Conexion conexion = new Conexion();
+
+        try{
+            String query = "SELECT dev_boss_id FROM areas WHERE boss_id = "+boss.getId()+";";
+
+            conexion.setRs(query);
+            ResultSet rs = conexion.getRs();
+
+            while(rs.next()){
+                 devBossId = rs.getInt("dev_boss_id");
+            }
+
+            PreparedStatement stmt;
+
+            String queryInsert = "INSERT INTO tickets (code, name, description, state_id, boss_id, dev_boss_id, created_at) VALUES " +
+                    "('" + generateNewCode(boss.getId()) + "', '" + name + "', '" + description + "', 1, '" + boss.getId() + "', '" + devBossId + "', CURRENT_TIMESTAMP)";
+
+            stmt = conexion.setQuery(queryInsert);
+            stmt.executeUpdate();
+            stmt.close();
+
+        }finally {
+            if (conexion != null) {
+                conexion.closeConnection();
+            }
+        }
+    }
+
+    public static String generateNewCode(int user_id) throws SQLException{
+        Random ran = new Random();
+        String prefix =  JefeArea.getPrefix_area_code(user_id);
+        String year = String.valueOf(Year.now());
+        String num = String.valueOf(ran.nextInt(999 - 100 + 1) + 100);
+
+        return prefix+year+num;
     }
 
     // Método para verificar si la fecha de entrega ha excedido la fecha actual

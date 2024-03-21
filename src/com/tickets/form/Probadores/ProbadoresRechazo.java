@@ -96,6 +96,7 @@ public class ProbadoresRechazo extends JFrame {
                 );
 
                 Probador.updateStateTicket(6, t.getId(), user.getId());
+                Probador.updateDateTicket(txtNewDate.getText(), t.getId());
                 Programador.newLog(bitacora,user.getId());
                 t.addBitacora(bitacora);
 

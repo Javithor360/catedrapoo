@@ -91,4 +91,16 @@ public class Probador {
         conexion.closeConnection();
     }
 
+    public static void updateDateTicket(String newDate, int ticketId) throws SQLException{
+        Conexion conexion = new Conexion();
+        PreparedStatement stmt;
+
+        String queryUpdate = "UPDATE tickets SET due_date = "+ newDate +" WHERE id = " + ticketId + ";";
+
+        stmt = conexion.setQuery(queryUpdate);
+        stmt.executeUpdate();
+        stmt.close();
+
+        conexion.closeConnection();
+    }
 }
