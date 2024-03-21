@@ -1,5 +1,6 @@
 package com.tickets.form.SuperAdmin.Clases;
 
+import com.tickets.form.SuperAdmin.Grupos.GruposMapeo;
 import com.tickets.form.SuperAdmin.NuevoEmpleado;
 
 import javax.swing.*;
@@ -7,6 +8,7 @@ import javax.swing.table.TableCellEditor;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
 public class ButtonEditor extends DefaultCellEditor {
     protected JButton button;
@@ -21,8 +23,13 @@ public class ButtonEditor extends DefaultCellEditor {
             if (row != -1) {
                 id = table.getValueAt(row, 0).toString();
                 // Abre el nuevo formulario y pasa el ID como parámetro
-                    JFrame frame = new NuevoEmpleado();
-                    frame.setVisible(true);
+                JFrame frame = null;
+                try {
+                    frame = new GruposMapeo();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+                frame.setVisible(true);
             }
         });
     }

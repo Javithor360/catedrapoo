@@ -223,9 +223,9 @@ public class AreaFuncionalNueva extends JFrame {
         NuevaAreaID = nuevaArea.insert(nuevaArea); // Guardar en la BD
 
         // Crear sus Respectivos Grupos ==========================================
-        Grupo grupoEmpleados = new Grupo("Empleados " + prefijo);
+        Grupo grupoEmpleados = new Grupo("Empleados " + name);
         grupoEmpleados.insert(grupoEmpleados);
-        Grupo grupoProgramadores = new Grupo("Programadores para " + name);
+        Grupo grupoProgramadores = new Grupo("Programadores para " + prefijo);
         grupoProgramadores.insert(grupoProgramadores);
 
         // Asignar los Jefes a los respectivos Grupos ============================

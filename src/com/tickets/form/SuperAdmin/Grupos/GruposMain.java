@@ -34,7 +34,7 @@ public class GruposMain extends JFrame {
         setContentPane(pnlGrupos);
 
         // Datos dinámicos de la tabla
-        String[] columns = {"ID", "Area", "Jefe", "Grupo N°", "Cantidad", "Acción"};
+        String[] columns = {"ID", "Area", "Nombre Grupo", "Jefe", "Cantidad", "Acción"};
         model = new DefaultTableModel(null, columns) {
             @Override
             public boolean isCellEditable(int row, int colum) {
@@ -72,7 +72,7 @@ public class GruposMain extends JFrame {
                                 grupo.getNombre_area(),
                                 grupo.getNombre_grupo(),
                                 grupo.getNombre_jefe(),
-                                grupo.getTotal_integrantes()
+                                (grupo.getTotal_integrantes() - 1 )
                         });
             }
         } else {
