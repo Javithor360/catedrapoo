@@ -20,7 +20,6 @@ public class GruposMain extends JFrame {
     private JLabel lblTitle;
     private JButton btnVolver;
     private JTable tblGrupos;
-
     private HashMap<Integer, MapeoAsignacion> grupos_list;
 
     DefaultTableModel model;
@@ -72,7 +71,7 @@ public class GruposMain extends JFrame {
                                 grupo.getNombre_area(),
                                 grupo.getNombre_grupo(),
                                 grupo.getNombre_jefe(),
-                                (grupo.getTotal_integrantes() - 1 )
+                                (grupo.getTotal_integrantes())
                         });
             }
         } else {
@@ -89,5 +88,6 @@ public class GruposMain extends JFrame {
 
         // Configurar el editor de celda para la columna de acción
         tblGrupos.getColumnModel().getColumn(actionColumnIndex).setCellEditor(new ButtonEditor(tblGrupos));
+        dispose();
     }
 }

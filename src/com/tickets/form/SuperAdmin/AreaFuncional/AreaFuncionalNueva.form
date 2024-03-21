@@ -106,16 +106,6 @@
                       <text value="Volver"/>
                     </properties>
                   </component>
-                  <component id="bcdb1" class="javax.swing.JButton" binding="btnLimpiar">
-                    <constraints>
-                      <grid row="10" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                    <properties>
-                      <background color="-13814811"/>
-                      <foreground color="-1035"/>
-                      <text value="Limpiar"/>
-                    </properties>
-                  </component>
                   <component id="b0009" class="javax.swing.JLabel" binding="lblEmail">
                     <constraints>
                       <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>

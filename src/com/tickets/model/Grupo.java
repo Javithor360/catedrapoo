@@ -6,22 +6,27 @@ import javax.swing.*;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.HashMap;
 
 public class Grupo {
     // Atributos ===================================
     private int id;
     private String nombre;
+    private int idUser;
     private static HashMap<Integer, Grupo> all_grupos;
 
-    public Grupo (int id, String nombre) {
+    public Grupo(int id, String nombre) {
         this.id = id;
         this.nombre = nombre;
     }
 
-    public Grupo (String nombre){
+    public Grupo(String nombre) {
         this.nombre = nombre;
+    }
+
+    public Grupo(int idUser, int id){
+        this.idUser = idUser;
+        this.id =id;
     }
 
     // Getters ====================================
@@ -30,6 +35,9 @@ public class Grupo {
     }
     public String getNombre() {
         return nombre;
+    }
+    public int getIdUser() {
+        return idUser;
     }
 
     // Métodos ===================================
@@ -45,8 +53,8 @@ public class Grupo {
 
         while (rs.next()) {
             Grupo grupo = new Grupo(
-            rs.getInt("id"),
-            rs.getString("name")
+                    rs.getInt("id"),
+                    rs.getString("name")
             );
 
             grupoList.put(grupo.getId(), grupo);
@@ -72,7 +80,7 @@ public class Grupo {
     public String insert(Grupo grupo) {
         String mensaje = "";
 
-        try{
+        try {
             Conexion conexion = new Conexion();
 
             PreparedStatement pstmt = conexion.setQuery(insert);
@@ -90,11 +98,76 @@ public class Grupo {
             conexion.closeConnection();
 
         } catch (SQLException e) {
-            System.out.println("ERROR:Fallo en SQL INSERT: "+ e.getMessage());
+            System.out.println("ERROR:Fallo en SQL INSERT: " + e.getMessage());
             System.exit(0);
         }
 
         return mensaje;
     }
+
+    // Insertar Integrante a un Grupo ================
+    private final String insertUser =
+            "INSERT INTO users_groups (user_id, group_id) VALUES (?, ?)";
+
+    public String insertUser(Grupo insertDispUserToGrup) {
+        String mensaje = "";
+
+        try {
+            Conexion conexion = new Conexion();
+            PreparedStatement pstmt = conexion.setQuery(insertUser);
+
+            pstmt.setInt(1, getIdUser());
+            pstmt.setInt(2, getId());
+            int rows = pstmt.executeUpdate();
+
+            if (rows > 0) {
+                mensaje = "Registro insertado correctamente.";
+            } else {
+                mensaje = "Error al insertar el registro";
+                JOptionPane.showMessageDialog(null, mensaje);
+            }
+
+            conexion.closeConnection();
+
+        } catch (SQLException e) {
+            System.out.println("ERROR:Fallo en SQL INSERT: " + e.getMessage());
+            System.exit(0);
+        }
+
+        return mensaje;
+    }
+
+    // Eliminar al integrante del grupo ================
+    private final String deleteUser =
+            "DELETE FROM users_groups WHERE user_id = ? AND group_id = ?";
+
+    public String deleteUser(Grupo userToRemoveFromGroup) {
+        String mensaje = "";
+
+        try {
+            Conexion conexion = new Conexion();
+            PreparedStatement pstmt = conexion.setQuery(deleteUser);
+
+            pstmt.setInt(1, getIdUser());
+            pstmt.setInt(2, getId());
+            int rows = pstmt.executeUpdate();
+
+            if (rows > 0) {
+                mensaje = "Usuario eliminado del grupo correctamente.";
+            } else {
+                mensaje = "No se encontró al usuario en el grupo especificado.";
+                JOptionPane.showMessageDialog(null, mensaje);
+            }
+
+            conexion.closeConnection();
+
+        } catch (SQLException e) {
+            System.out.println("ERROR: Fallo en SQL DELETE: " + e.getMessage());
+            e.printStackTrace(); // Manejar la excepción adecuadamente
+        }
+
+        return mensaje;
+    }
+
 
 }

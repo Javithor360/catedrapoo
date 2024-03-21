@@ -25,7 +25,7 @@ public class ButtonEditor extends DefaultCellEditor {
                 // Abre el nuevo formulario y pasa el ID como parámetro
                 JFrame frame = null;
                 try {
-                    frame = new GruposMapeo();
+                    frame = new GruposMapeo(id);
                 } catch (SQLException ex) {
                     throw new RuntimeException(ex);
                 }

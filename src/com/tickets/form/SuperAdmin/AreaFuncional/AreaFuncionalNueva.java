@@ -26,7 +26,6 @@ public class AreaFuncionalNueva extends JFrame {
     private JButton btnGuardar;
     private JLabel lblConfirm;
     private JButton btnVolver;
-    private JButton btnLimpiar;
     private JComboBox cmbDevBoss;
     private JComboBox cmbBoss;
     private JLabel lblNumGrupo;

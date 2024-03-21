@@ -1,5 +1,6 @@
 package com.tickets.model;
 
+import com.tickets.form.SuperAdmin.Clases.User;
 import com.tickets.util.Conexion;
 
 import javax.swing.*;
@@ -19,6 +20,8 @@ public class MapeoAsignacion {
     private String nombre_grupo;
     private int total_integrantes;
     private static HashMap<Integer, MapeoAsignacion> all_asignaciones;
+    private static HashMap<Integer, User> disp_users;
+    private static HashMap<Integer, User> ingroup_users;
 
     public MapeoAsignacion(int id, int boss_id, String nombre_jefe, int area_id, String nombre_area, int users_group_id, String nombre_grupo, int total_integrantes) {
         this.id = id;
@@ -31,7 +34,7 @@ public class MapeoAsignacion {
         this.total_integrantes = total_integrantes;
     }
 
-    public MapeoAsignacion(int boss_id, int area_id, int users_group_id){
+    public MapeoAsignacion(int boss_id, int area_id, int users_group_id) {
         this.boss_id = boss_id;
         this.area_id = area_id;
         this.users_group_id = users_group_id;
@@ -41,24 +44,31 @@ public class MapeoAsignacion {
     public int getId() {
         return id;
     }
+
     public int getBoss_id() {
         return boss_id;
     }
+
     public String getNombre_jefe() {
         return nombre_jefe;
     }
+
     public int getArea_id() {
         return area_id;
     }
+
     public String getNombre_area() {
         return nombre_area;
     }
+
     public int getUsers_group_id() {
         return users_group_id;
     }
+
     public String getNombre_grupo() {
         return nombre_grupo;
     }
+
     public int getTotal_integrantes() {
         return total_integrantes;
     }
@@ -83,10 +93,10 @@ public class MapeoAsignacion {
         ResultSet rs = conexion.getRs();
         // ===================================================================
         Conexion conexionCount = new Conexion();
-        String queryTotalIntegrantes = "SELECT users_group_id AS GrupoID, " +
+        String queryTotalIntegrantes = "SELECT group_id AS GrupoID, " +
                 "COUNT(*) AS TotalIntegrantes " +
-                "FROM assignments_map " +
-                "GROUP BY users_group_id;";
+                "FROM users_groups " +
+                "GROUP BY group_id;";
         conexionCount.setRs(queryTotalIntegrantes);
         ResultSet rsCount = conexionCount.getRs();
 
@@ -118,6 +128,78 @@ public class MapeoAsignacion {
         MapeoAsignacion.all_asignaciones = all_asignaciones;
     }
 
+    // ============================================
+    public static void fetchDispUsers() throws SQLException {
+        HashMap<Integer, User> dispUsersList = new HashMap<>();
+
+        Conexion conexion = new Conexion();
+        String query = "SELECT u.id AS ID, u.name AS Nombre, u.email AS Email FROM users u " +
+                "LEFT JOIN users_groups ug ON u.id = ug.user_id " +
+                "WHERE ug.user_id IS NULL " +
+                "AND u.role_id NOT IN (1, 3) ; ";
+        conexion.setRs(query);
+        ResultSet rs = conexion.getRs();
+
+        while (rs.next()) {
+            User usuario = new User(
+                    rs.getInt("ID"),
+                    rs.getString("Nombre"),
+                    rs.getString("Email")
+           );
+            dispUsersList.put(usuario.getId(),usuario);
+        }
+
+        setDisp_users(dispUsersList);
+        conexion.closeConnection();
+    }
+
+    public static HashMap<Integer, User> getDisp_users() {
+        return disp_users;
+    }
+
+    public static void setDisp_users(HashMap<Integer, User> disp_users) {
+        MapeoAsignacion.disp_users = disp_users;
+    }
+
+    // ============================================
+    public static void fetchUserGroup(int groupId) throws SQLException {
+        HashMap<Integer, User> usersInGroupList = new HashMap<>();
+
+        Conexion conexion = new Conexion();
+        String query = "SELECT u.id AS ID, u.name AS Nombre, u.email AS Email " +
+                "FROM users u " +
+                "JOIN users_groups ug ON u.id = ug.user_id " +
+                "WHERE ug.group_id = ?";
+        PreparedStatement pstmt = conexion.setQuery(query);
+
+        // Asignar el ID del grupo como parámetro
+        pstmt.setInt(1, groupId);
+
+        ResultSet rs = pstmt.executeQuery();
+
+        while (rs.next()) {
+            User user = new User(
+                    rs.getInt("ID"),
+                    rs.getString("Nombre"),
+                    rs.getString("Email")
+            );
+            usersInGroupList.put(user.getId(), user);
+        }
+
+        System.out.printf(String.valueOf(usersInGroupList));
+
+        setIngroup_users(usersInGroupList);
+        conexion.closeConnection();
+    }
+
+    public static HashMap<Integer, User> getIngroup_users() {
+        return ingroup_users;
+    }
+
+    public static void setIngroup_users(HashMap<Integer, User> ingroup_users) {
+        MapeoAsignacion.ingroup_users = ingroup_users;
+    }
+
     // BDD ===================================
     private final String insert =
             "INSERT INTO assignments_map (boss_id, area_id, users_group_id) VALUES (?, ?, ?)";
@@ -125,7 +207,7 @@ public class MapeoAsignacion {
     public String insert(MapeoAsignacion mapeo) {
         String mensaje = "";
 
-        try{
+        try {
             Conexion conexion = new Conexion();
 
             PreparedStatement pstmt = conexion.setQuery(insert);
@@ -146,7 +228,7 @@ public class MapeoAsignacion {
             conexion.closeConnection();
 
         } catch (SQLException e) {
-            System.out.println("ERROR:Fallo en SQL INSERT: "+ e.getMessage());
+            System.out.println("ERROR:Fallo en SQL INSERT: " + e.getMessage());
             System.exit(0);
         }
 
