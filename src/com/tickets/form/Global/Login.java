@@ -22,7 +22,7 @@ public class Login extends JFrame {
     private JButton btnIngresar;
     private JPanel pnlLogin;
 
-    public Login(){
+    public Login() {
         super("Sistema de Casos - Inicio de sesión");
         setVisible(true);
         setMaximumSize(new Dimension(500, 500));

@@ -38,7 +38,7 @@ public class Grupo {
         HashMap<Integer, Grupo> grupoList = new HashMap<>();
 
         Conexion conexion = new Conexion();
-        String query = "SELECT * FROM grupos";
+        String query = "SELECT * FROM `groups`";
         conexion.setRs(query);
 
         ResultSet rs = conexion.getRs();
@@ -67,7 +67,7 @@ public class Grupo {
     // Guardar en la BD ============================
 
     private final String insert =
-            "INSERT INTO grupos (name) VALUES (?)";
+            "INSERT INTO `groups` (name) VALUES (?)";
 
     public String insert(Grupo grupo) {
         String mensaje = "";

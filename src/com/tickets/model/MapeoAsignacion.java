@@ -78,7 +78,7 @@ public class MapeoAsignacion {
                 "FROM assignments_map ma " +
                 "LEFT JOIN users u1 ON ma.boss_id = u1.id " +
                 "LEFT JOIN areas a ON ma.area_id = a.id " +
-                "LEFT JOIN grupos g ON ma.users_group_id = g.id;";
+                "LEFT JOIN `groups` g ON ma.users_group_id = g.id;";
         conexion.setRs(query);
         ResultSet rs = conexion.getRs();
         // ===================================================================

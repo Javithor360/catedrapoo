@@ -93,7 +93,7 @@ public class AreaFuncionalNueva extends JFrame {
         lblNumGrupoProgra.setText(String.valueOf(getNumGrupoProgramadores()));
     }
 
-    public void validarPrefix() {
+    public boolean validarPrefix() {
         String prefijo = txtPrefix.getText();
         if (prefijo.length() != 3) {
             JOptionPane.showMessageDialog(null,
@@ -101,7 +101,9 @@ public class AreaFuncionalNueva extends JFrame {
                     "Error",
                     JOptionPane.ERROR_MESSAGE);
             txtPrefix.setText("");
+            return false;
         }
+        return true;
     }
 
     public int extraerJefe(String cmbSeleccionado) {
@@ -210,32 +212,35 @@ public class AreaFuncionalNueva extends JFrame {
             return;
         }
 
-        validarPrefix();
+        if(validarPrefix()) {
+            String name = txtNombre.getText();
+            String prefijo = txtPrefix.getText();
+            int id_boss =  extraerJefe(cmbBoss.getSelectedItem().toString());
+            int id_dev_boss =  extraerJefe(cmbDevBoss.getSelectedItem().toString());
+            int NuevaAreaID = -1; // Valor por defecto en caso de error
 
-        String name = txtNombre.getText();
-        String prefijo = txtPrefix.getText();
-        int id_boss =  extraerJefe(cmbBoss.getSelectedItem().toString());
-        int id_dev_boss =  extraerJefe(cmbDevBoss.getSelectedItem().toString());
-        int NuevaAreaID = -1; // Valor por defecto en caso de error
+            // Crear nueva Area ======================================================
+            Area nuevaArea = new Area(name,prefijo,id_boss,id_dev_boss); // Instancia
+            NuevaAreaID = nuevaArea.insert(nuevaArea); // Guardar en la BD
 
-        // Crear nueva Area ======================================================
-        Area nuevaArea = new Area(name,prefijo,id_boss,id_dev_boss); // Instancia
-        NuevaAreaID = nuevaArea.insert(nuevaArea); // Guardar en la BD
+            // Crear sus Respectivos Grupos ==========================================
+            Grupo grupoEmpleados = new Grupo("Empleados " + name);
+            grupoEmpleados.insert(grupoEmpleados);
+            Grupo grupoProgramadores = new Grupo("Programadores para " + prefijo);
+            grupoProgramadores.insert(grupoProgramadores);
 
-        // Crear sus Respectivos Grupos ==========================================
-        Grupo grupoEmpleados = new Grupo("Empleados " + name);
-        grupoEmpleados.insert(grupoEmpleados);
-        Grupo grupoProgramadores = new Grupo("Programadores para " + prefijo);
-        grupoProgramadores.insert(grupoProgramadores);
+            // Asignar los Jefes a los respectivos Grupos ============================
+            MapeoAsignacion JefeGrupoEmpleado = new MapeoAsignacion(id_boss, NuevaAreaID, getNumGrupoEmpleado());
+            JefeGrupoEmpleado.insert(JefeGrupoEmpleado);
+            MapeoAsignacion JefeGrupoDesarrollo = new MapeoAsignacion(id_dev_boss, NuevaAreaID, getNumGrupoProgramadores());
+            JefeGrupoDesarrollo.insert(JefeGrupoDesarrollo);
 
-        // Asignar los Jefes a los respectivos Grupos ============================
-        MapeoAsignacion JefeGrupoEmpleado = new MapeoAsignacion(id_boss, NuevaAreaID, getNumGrupoEmpleado());
-        JefeGrupoEmpleado.insert(JefeGrupoEmpleado);
-        MapeoAsignacion JefeGrupoDesarrollo = new MapeoAsignacion(id_dev_boss, NuevaAreaID, getNumGrupoProgramadores());
-        JefeGrupoDesarrollo.insert(JefeGrupoDesarrollo);
+            // Reiniciar FORM
+            reiniciarForm();
+        } else {
+            txtPrefix.setText("");
+        }
 
-        // Reiniciar FORM
-        reiniciarForm();
     }
     private void reiniciarForm() throws SQLException {
         dispose();
