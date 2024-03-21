@@ -6,9 +6,7 @@ import javax.swing.*;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.HashMap;
-import java.util.Map;
 
 public class MapeoAsignacion {
 
@@ -19,9 +17,10 @@ public class MapeoAsignacion {
     private String nombre_area;
     private int users_group_id;
     private String nombre_grupo;
+    private int total_integrantes;
     private static HashMap<Integer, MapeoAsignacion> all_asignaciones;
 
-    public MapeoAsignacion(int id, int boss_id, String nombre_jefe, int area_id, String nombre_area, int users_group_id, String nombre_grupo) {
+    public MapeoAsignacion(int id, int boss_id, String nombre_jefe, int area_id, String nombre_area, int users_group_id, String nombre_grupo, int total_integrantes) {
         this.id = id;
         this.boss_id = boss_id;
         this.nombre_jefe = nombre_jefe;
@@ -29,6 +28,7 @@ public class MapeoAsignacion {
         this.nombre_area = nombre_area;
         this.users_group_id = users_group_id;
         this.nombre_grupo = nombre_grupo;
+        this.total_integrantes = total_integrantes;
     }
 
     public MapeoAsignacion(int boss_id, int area_id, int users_group_id){
@@ -59,22 +59,38 @@ public class MapeoAsignacion {
     public String getNombre_grupo() {
         return nombre_grupo;
     }
+    public int getTotal_integrantes() {
+        return total_integrantes;
+    }
 
     // Métodos ===================================
     public static void fetchAllAsignaciones() throws SQLException {
         HashMap<Integer, MapeoAsignacion> mapeoList = new HashMap<>();
 
         Conexion conexion = new Conexion();
-        String query = "SELECT ma.id AS ID, ma.boss_id AS JefeID, u1.name AS NombreJefe, ma.area_id AS AreaID, a.name AS NombreArea, ma.users_group_id AS GrupoID, g.nombre AS NombreGrupo " +
-                "FROM mapeo_asignacion ma " +
+        String query = "SELECT ma.id AS ID, " +
+                "ma.boss_id AS JefeID, " +
+                "u1.name AS NombreJefe, " +
+                "ma.area_id AS AreaID, " +
+                "a.name AS NombreArea, " +
+                "ma.users_group_id AS GrupoID, " +
+                "g.name AS NombreGrupo " +
+                "FROM assignments_map ma " +
                 "LEFT JOIN users u1 ON ma.boss_id = u1.id " +
                 "LEFT JOIN areas a ON ma.area_id = a.id " +
-                "LEFT JOIN grupos g ON ma.users_group_id = g.id;\n";
+                "LEFT JOIN grupos g ON ma.users_group_id = g.id;";
         conexion.setRs(query);
-
         ResultSet rs = conexion.getRs();
+        // ===================================================================
+        Conexion conexionCount = new Conexion();
+        String queryTotalIntegrantes = "SELECT users_group_id AS GrupoID, " +
+                "COUNT(*) AS TotalIntegrantes " +
+                "FROM assignments_map " +
+                "GROUP BY users_group_id;";
+        conexionCount.setRs(queryTotalIntegrantes);
+        ResultSet rsCount = conexionCount.getRs();
 
-        while (rs.next()) {
+        while (rs.next() && rsCount.next()) {
             MapeoAsignacion mapeo = new MapeoAsignacion(
                     rs.getInt("ID"),
                     rs.getInt("JefeID"),
@@ -82,7 +98,8 @@ public class MapeoAsignacion {
                     rs.getInt("AreaID"),
                     rs.getString("NombreArea"),
                     rs.getInt("GrupoID"),
-                    rs.getString("NombreGrupo")
+                    rs.getString("NombreGrupo"),
+                    rsCount.getInt("TotalIntegrantes")
             );
 
             mapeoList.put(mapeo.getId(), mapeo);
@@ -90,9 +107,10 @@ public class MapeoAsignacion {
 
         setAll_asignaciones(mapeoList);
         conexion.closeConnection();
+        conexionCount.closeConnection();
     }
 
-    public HashMap<Integer, MapeoAsignacion> getAll_asignaciones() {
+    public static HashMap<Integer, MapeoAsignacion> getAll_asignaciones() {
         return all_asignaciones;
     }
 

@@ -4,6 +4,7 @@ import com.tickets.form.SuperAdmin.Clases.ButtonEditor;
 import com.tickets.form.SuperAdmin.Clases.ButtonRenderer;
 import com.tickets.form.SuperAdmin.SuperAdmin;
 import com.tickets.model.Grupo;
+import com.tickets.model.MapeoAsignacion;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -20,7 +21,7 @@ public class GruposMain extends JFrame {
     private JButton btnVolver;
     private JTable tblGrupos;
 
-    private HashMap<Integer, Grupo> grupos_list;
+    private HashMap<Integer, MapeoAsignacion> grupos_list;
 
     DefaultTableModel model;
 
@@ -33,7 +34,7 @@ public class GruposMain extends JFrame {
         setContentPane(pnlGrupos);
 
         // Datos dinámicos de la tabla
-        String[] columns = {"ID", "Nombre", "Acción"};
+        String[] columns = {"ID", "Area", "Jefe", "Grupo N°", "Cantidad", "Acción"};
         model = new DefaultTableModel(null, columns) {
             @Override
             public boolean isCellEditable(int row, int colum) {
@@ -56,19 +57,22 @@ public class GruposMain extends JFrame {
     }
 
     public void get_all_grupos() throws SQLException {
-        Grupo.fetchAllGroups();
+        MapeoAsignacion.fetchAllAsignaciones();
 
-        grupos_list = Grupo.getAll_grupos();
+        grupos_list = MapeoAsignacion.getAll_asignaciones();
 
         model.setRowCount(0);
 
         if (!grupos_list.isEmpty()) {
-            for (Map.Entry<Integer, Grupo> entry : grupos_list.entrySet()) {
-                Grupo grupo = entry.getValue();
+            for (Map.Entry<Integer, MapeoAsignacion> entry : grupos_list.entrySet()) {
+                MapeoAsignacion grupo = entry.getValue();
                 model.addRow(
                         new Object[]{
                                 grupo.getId(),
-                                grupo.getNombre(),
+                                grupo.getNombre_area(),
+                                grupo.getNombre_grupo(),
+                                grupo.getNombre_jefe(),
+                                grupo.getTotal_integrantes()
                         });
             }
         } else {
@@ -78,7 +82,7 @@ public class GruposMain extends JFrame {
 
     private void addBtnEditColumn() {
         // Índice de la columna de acción
-        int actionColumnIndex = 2;
+        int actionColumnIndex = 5;
 
         // Configurar el renderizador de celda para la columna de acción
         tblGrupos.getColumnModel().getColumn(actionColumnIndex).setCellRenderer(new ButtonRenderer());
