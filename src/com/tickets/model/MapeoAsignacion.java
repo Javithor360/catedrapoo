@@ -100,7 +100,11 @@ public class MapeoAsignacion {
         conexionCount.setRs(queryTotalIntegrantes);
         ResultSet rsCount = conexionCount.getRs();
 
-        while (rs.next() && rsCount.next()) {
+        boolean hasNextCount = rsCount.next(); // Verifica si rsCount tiene al menos un valor
+
+        while (rs.next()) {
+            int totalIntegrantes = hasNextCount ? rsCount.getInt("TotalIntegrantes") : 0;
+
             MapeoAsignacion mapeo = new MapeoAsignacion(
                     rs.getInt("ID"),
                     rs.getInt("JefeID"),
@@ -109,10 +113,13 @@ public class MapeoAsignacion {
                     rs.getString("NombreArea"),
                     rs.getInt("GrupoID"),
                     rs.getString("NombreGrupo"),
-                    rsCount.getInt("TotalIntegrantes")
+                    totalIntegrantes
             );
 
             mapeoList.put(mapeo.getId(), mapeo);
+
+            // Avanzamos al siguiente resultado de rsCount solo si hay un próximo resultado
+            hasNextCount = rsCount.next();
         }
 
         setAll_asignaciones(mapeoList);
@@ -129,14 +136,24 @@ public class MapeoAsignacion {
     }
 
     // ============================================
-    public static void fetchDispUsers() throws SQLException {
+    public static void fetchDispUsers(String type) throws SQLException {
         HashMap<Integer, User> dispUsersList = new HashMap<>();
+        String idUsuarios = "0";
+
+        System.out.printf(type);
+
+        if (type.equals("Empleados")) idUsuarios = "4";
+        else if (type.equals("Programadores")) {
+            idUsuarios = "2";
+        }
 
         Conexion conexion = new Conexion();
         String query = "SELECT u.id AS ID, u.name AS Nombre, u.email AS Email FROM users u " +
                 "LEFT JOIN users_groups ug ON u.id = ug.user_id " +
                 "WHERE ug.user_id IS NULL " +
-                "AND u.role_id NOT IN (1, 3) ; ";
+                "AND u.role_id NOT IN (1, 3) " +
+                "AND u.role_id = " + idUsuarios + " ;" ;
+
         conexion.setRs(query);
         ResultSet rs = conexion.getRs();
 
@@ -145,8 +162,8 @@ public class MapeoAsignacion {
                     rs.getInt("ID"),
                     rs.getString("Nombre"),
                     rs.getString("Email")
-           );
-            dispUsersList.put(usuario.getId(),usuario);
+            );
+            dispUsersList.put(usuario.getId(), usuario);
         }
 
         setDisp_users(dispUsersList);
@@ -185,8 +202,6 @@ public class MapeoAsignacion {
             );
             usersInGroupList.put(user.getId(), user);
         }
-
-        System.out.printf(String.valueOf(usersInGroupList));
 
         setIngroup_users(usersInGroupList);
         conexion.closeConnection();

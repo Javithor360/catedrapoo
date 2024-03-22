@@ -25,13 +25,14 @@ public class GruposMapeo extends JFrame {
     private JPanel lblDisponibles;
     private JLabel titleGrupoMapeo;
     private int grupoId;
+    private String typeGroup;
     private HashMap<Integer, User> dispUsers_list;
     private HashMap<Integer, User> inGroup_list;
     DefaultTableModel model;
     DefaultTableModel modelIntegrantes;
 
-    public GruposMapeo(String id) throws SQLException {
-        super("Grupo N° " + id);
+    public GruposMapeo(String id, String type) throws SQLException {
+        super("Grupo N° " + id + " " + type);
         setMinimumSize(new Dimension(600, 500));
         setMaximumSize(new Dimension(600, 500));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -39,6 +40,10 @@ public class GruposMapeo extends JFrame {
         setContentPane(pnlGrupoMapeo);
 
         setGrupoId(Integer.parseInt(id));
+        setTypeGroup(type);
+
+        System.out.printf(getTypeGroup());
+
         llenarTabla();
 
         tblDisponibles.addMouseListener(new MouseAdapter() {
@@ -78,12 +83,6 @@ public class GruposMapeo extends JFrame {
         });
     }
 
-    /*
-        Paso 2: Obtener el id del usuario al que se moverá de grupo, ya sea para agregarlo o eliminarlo
-        Paso 3: Ejecutar la lógica interna para hacer el cambio en la base de datos
-        Paso 4: Refrescar la tabla con los cambios realizados
-     */
-
     public void obtenerDatosDisponibles() throws SQLException {
         // Obteniendo el valor del id del usuario que se moverá de grupo
         int id = (int) model.getValueAt(tblDisponibles.getSelectedRow(), 0);
@@ -102,9 +101,16 @@ public class GruposMapeo extends JFrame {
         int id = (int) modelIntegrantes.getValueAt(tblIntegrantes.getSelectedRow(), 0);
 
         try {
-            Grupo deleteUserFromGroup = new Grupo(id, getGrupoId());
-            deleteUserFromGroup.deleteUser(deleteUserFromGroup);
-            llenarTabla();
+            // Verificar si hay al menos una fila en el modelo de la tabla
+            if (modelIntegrantes.getRowCount() > 1) {
+                System.out.printf(String.valueOf(modelIntegrantes.getRowCount()));
+                Grupo deleteUserFromGroup = new Grupo(id, getGrupoId());
+                deleteUserFromGroup.deleteUser(deleteUserFromGroup);
+                llenarTabla();
+            } else {
+                // Si no hay filas en el modelo de la tabla, mostrar un mensaje o realizar alguna acción adecuada
+                JOptionPane.showMessageDialog(null, "No se puede eliminar más usuarios, el grupo debe mantener al menos un integrante");
+            }
         } catch (Exception ex) {
             System.out.printf(String.valueOf(ex));
         }
@@ -141,7 +147,7 @@ public class GruposMapeo extends JFrame {
 
     // ===============================================================
     public void get_disp_users() throws SQLException {
-        MapeoAsignacion.fetchDispUsers();
+        MapeoAsignacion.fetchDispUsers(getTypeGroup());
         dispUsers_list = MapeoAsignacion.getDisp_users();
 
         model.setRowCount(0);
@@ -178,8 +184,6 @@ public class GruposMapeo extends JFrame {
                                 usuario.getEmail(),
                         });
             }
-        } else {
-            modelIntegrantes.addRow(new Object[]{"Sin", "Integrantes", "del Grupo"});
         }
     }
 
@@ -190,6 +194,14 @@ public class GruposMapeo extends JFrame {
 
     public void setGrupoId(int grupoId) {
         this.grupoId = grupoId;
+    }
+
+    public String getTypeGroup() {
+        return typeGroup;
+    }
+
+    public void setTypeGroup(String typeGroup) {
+        this.typeGroup = typeGroup;
     }
 
 }

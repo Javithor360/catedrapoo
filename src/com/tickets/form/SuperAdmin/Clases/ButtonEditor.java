@@ -13,6 +13,7 @@ import java.sql.SQLException;
 public class ButtonEditor extends DefaultCellEditor {
     protected JButton button;
     private String id; // ID de la fila que se estará editando
+    private String type;
 
     public ButtonEditor(final JTable table) {
         super(new JCheckBox());
@@ -22,10 +23,20 @@ public class ButtonEditor extends DefaultCellEditor {
             int row = table.getSelectedRow();
             if (row != -1) {
                 id = table.getValueAt(row, 0).toString();
+
+                // Obtener el valor de la celda
+                type = table.getValueAt(row, 2).toString();
+
+                // Dividir la cadena en un array de subcadenas usando el espacio como delimitador
+                String[] parts = type.split("\\s+");
+
+                // Obtener la primera palabra (primer elemento del array)
+                String firstWord = parts[0];
+
                 // Abre el nuevo formulario y pasa el ID como parámetro
                 JFrame frame = null;
                 try {
-                    frame = new GruposMapeo(id);
+                    frame = new GruposMapeo(id, firstWord);
                 } catch (SQLException ex) {
                     throw new RuntimeException(ex);
                 }

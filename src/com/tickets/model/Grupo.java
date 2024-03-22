@@ -13,6 +13,7 @@ public class Grupo {
     private int id;
     private String nombre;
     private int idUser;
+    private String tipo;
     private static HashMap<Integer, Grupo> all_grupos;
 
     public Grupo(int id, String nombre) {
@@ -38,6 +39,9 @@ public class Grupo {
     }
     public int getIdUser() {
         return idUser;
+    }
+    public String getTipo() {
+        return tipo;
     }
 
     // Métodos ===================================
@@ -75,7 +79,7 @@ public class Grupo {
     // Guardar en la BD ============================
 
     private final String insert =
-            "INSERT INTO `groups` (name) VALUES (?)";
+            "INSERT INTO `groups` (name, type) VALUES (?, ?)";
 
     public String insert(Grupo grupo) {
         String mensaje = "";
@@ -86,6 +90,7 @@ public class Grupo {
             PreparedStatement pstmt = conexion.setQuery(insert);
 
             pstmt.setString(1, getNombre());
+            pstmt.setString(2, getTipo());
             int rows = pstmt.executeUpdate();
 
             if (rows > 0) {

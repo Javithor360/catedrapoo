@@ -33,7 +33,9 @@ public class GruposMain extends JFrame {
         setContentPane(pnlGrupos);
 
         // Datos dinámicos de la tabla
-        String[] columns = {"ID", "Area", "Nombre Grupo", "Jefe", "Cantidad", "Acción"};
+        String[] columns = {"ID", "Area", "Nombre Grupo", "Jefe",
+                // "Cantidad",
+                "Acción"};
         model = new DefaultTableModel(null, columns) {
             @Override
             public boolean isCellEditable(int row, int colum) {
@@ -71,7 +73,7 @@ public class GruposMain extends JFrame {
                                 grupo.getNombre_area(),
                                 grupo.getNombre_grupo(),
                                 grupo.getNombre_jefe(),
-                                (grupo.getTotal_integrantes())
+                              //  (grupo.getTotal_integrantes())
                         });
             }
         } else {
@@ -81,7 +83,10 @@ public class GruposMain extends JFrame {
 
     private void addBtnEditColumn() {
         // Índice de la columna de acción
-        int actionColumnIndex = 5;
+        int actionColumnIndex = 4;
+        int typeGroupIndex = 2;
+
+        tblGrupos.getColumnModel().getColumn(typeGroupIndex);
 
         // Configurar el renderizador de celda para la columna de acción
         tblGrupos.getColumnModel().getColumn(actionColumnIndex).setCellRenderer(new ButtonRenderer());
