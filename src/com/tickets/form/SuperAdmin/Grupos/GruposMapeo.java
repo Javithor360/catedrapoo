@@ -72,13 +72,7 @@ public class GruposMapeo extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispose();
-                JFrame frame = null;
-                try {
-                    frame = new GruposMain();
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
-                }
-                frame.setVisible(true);
+
             }
         });
     }
