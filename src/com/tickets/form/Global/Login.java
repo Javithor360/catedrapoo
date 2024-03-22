@@ -90,6 +90,8 @@ public class Login extends JFrame {
                     } else if (userInfo.getRole_id() == 4) {
                         new ProbadoresMain(userInfo);
                     }
+                } else {
+                    JOptionPane.showMessageDialog(null, "No se encontró ningún usuario que coincida con los datos ingresados", "ERROR", JOptionPane.ERROR_MESSAGE);
                 }
                 conexion.closeConnection();
             }
