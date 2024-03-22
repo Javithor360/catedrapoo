@@ -79,7 +79,7 @@ public class Grupo {
     // Guardar en la BD ============================
 
     private final String insert =
-            "INSERT INTO `groups` (name, type) VALUES (?, ?)";
+            "INSERT INTO `groups` (name) VALUES (?)";
 
     public String insert(Grupo grupo) {
         String mensaje = "";
@@ -90,7 +90,6 @@ public class Grupo {
             PreparedStatement pstmt = conexion.setQuery(insert);
 
             pstmt.setString(1, getNombre());
-            pstmt.setString(2, getTipo());
             int rows = pstmt.executeUpdate();
 
             if (rows > 0) {
